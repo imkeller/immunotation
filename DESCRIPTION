@@ -1,0 +1,16 @@
+Package: immunotation
+Type: Package
+Title: Tools for working with diverse immune genes
+Version: 0.0.1
+Authors@R: c(
+    person("Katharina", "Imkeller", email = "imkeller@embl.org", role = c("cre", "aut")))
+Description: The package immunotation provides tools for consistent annotation of immune genes (such as HLA) in typical immunoinformatics workflows. The functions that allow mapping between different HLA naming schemes are based on the MHC restriction ontology (MRO). The package also provides an automated access to HLA alleles frequencies in worldwide human reference populations stored in the Allele Frequency Net Database.
+License: GPL-3
+Encoding: UTF-8
+LazyData: false
+Depends: R (>= 3.6)
+Imports: rvest, stringr
+Suggests: knitr, testthat
+VignetteBuilder: knitr
+RoxygenNote: 7.1.1
+biocViews: Software
