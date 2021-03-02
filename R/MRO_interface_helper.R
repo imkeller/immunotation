@@ -1,4 +1,13 @@
-
+#' get_valid_organisms
+#' query the possible species
+#' @return a list of organisms that are part of the annotation functions
+#' @export
+#'
+#' @examples
+get_valid_organisms <- function() {
+    mro.obo$name[organism_children]
+}
+valid_organisms <- get_valid_organisms()
 # get a list of terms
 get_name <- function(term) {
     get_term_property(mro.obo, property_name = "name", term, as_names = FALSE)
@@ -28,12 +37,10 @@ get_complex_chains <- function(id) {
     chains
 }
 
-# extract annotation foe a protein chain
-
-prop_value <- get_term_property(mro.obo, property_name = "property_value", "MRO:0011061", as_names = FALSE)
-entries <- strsplit(prop_value[1], split = "\\s\"|\"\\s")
-
-proplist1 <- get_term_property(mro.obo, property_name = "intersection_of", "MRO:0001150", as_names = FALSE)
-# location of MRO:0001984
-n_comp <- grep("MRO:0001984", proplist1)
-entries <- strsplit(proplist1[n_comp], split = "\\s\"|\"\\s")[[1]][[2]]
+get_complex_serotype <- function(id) {
+    prop_value <- get_term_property(mro.obo, property_name = "intersection_of", id, as_names = FALSE)
+    loc_serotype <- grep("MRO:0000001", prop_value)
+    serotype <- str_extract(prop_value[loc_serotype], pattern = "(?<=\\s)(.*)")
+    if(length(serotype) == 0) {serotype <- NA}
+    serotype
+}

@@ -12,6 +12,14 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+library(stringr)
+library(ontologyIndex)
+library(tidyverse)
+library(immunotation)
+```
+
+
 ## Introduction
 
 ### Hyperpolymorphic HLA genes in human populations
@@ -59,16 +67,20 @@ The package also provides an automated access to HLA alleles frequencies in worl
 Install from github using the devtools library:
 
 ```{r}
-library(devtools)
+#library(devtools)
 
-devtools::install_github("imkeller/immunotation")
+#devtools::install_github("imkeller/immunotation")
 ```
 
 ## Functions related to mapping of different HLA naming schemes
 
 ### Serotypes, genes, alleles in MRO ontology
 
-species, 
+species
+
+```{r}
+get_valid_organisms()
+```
 
 
 numbers
@@ -80,14 +92,53 @@ df <- retrieve_lookup_table(organism = "human")
 ```{r}
 df %>%
     group_by(mhc_type_names, locus_names) %>%
-    summarize(n = n())
+    summarize(number_of_alleles = n())
 
 # when no non-classical locus present (crab-eating macaque), problem
 ```
 
+### Functions for name conversions
+
+```{r}
+allele_list1 <- c("A*01:01:01", "A*03:01:01",
+                "B*39:01:01", "B*07:02:01", 
+                "C*08:01:01", "C*01:02:01")
+allele_list2 <- c("DPB1*14:01:01", "DPB1*02:01:02",
+                "DQA1*02:01:01", "DQA1*05:03",
+                "DQB1*02:02:01", "DQB1*06:09:01",
+                "DRB1*10:01:01", "DRB1*14:02:01")
+
+allele_list3 <- c("A*24:459", "A*26:01:01", 
+                  "B*38:01:01", "B*51:01:01", 
+                  "C*01:02:18", "C*12:03:01")
+
+allele_list4 <- c("DPA1*01:03:01", "DPA1*01:04:01",
+                  "DPB1*104:01:01", "DPB1*04:02:01",
+                  "DQA1*05:05:01", "DQA1*01:02:01",
+                  "DQB1*05:04", 
+                  "DRB1*11:01:01", "DRB1*01:01:01")
+
+allele_list5 <- c("A*02:01:126", "A*24:02:118",
+                  "B*35:288", "B*18:01:01",
+                  "C*04:01:88")
+
+```
+
+Get protein complexes
+```{r}
+get_mhcpan_input(allele_list1, mhc_class = "MHC-I")
+get_mhcpan_input(allele_list4, mhc_class = "MHC-II")
+get_mhcpan_input(allele_list5, mhc_class = "MHC-I")
+```
+Get serotypes
+
+```{r}
+get_serotypes(allele_list1)
+```
 
 
 ### Protein groups, MAC identifiers
+
 
 
 ## Functions related to worldwide population frequencies
@@ -158,14 +209,16 @@ Sample output:
  "DRB1": ["DRB1*10:01:01", "DRB1*14:02:01"]}
 
 ```{r}
-allele_list <- c("A*01:01:01", "A*03:01:01",
+allele_list1 <- c("A*01:01:01", "A*03:01:01",
                 "B*39:01:01", "B*07:02:01", 
-                "C*08:01:01", "C*01:02:01",
-                "DPB1*14:01:01", "DPB1*02:01:02",
+                "C*08:01:01", "C*01:02:01")
+allele_list2 <- c("DPB1*14:01:01", "DPB1*02:01:02",
                 "DQA1*02:01:01", "DQA1*05:03",
                 "DQB1*02:02:01", "DQB1*06:09:01",
                 "DRB1*10:01:01", "DRB1*14:02:01")
 ```
+
+
 
 ```{r}
 orgid <- organism_input("human")
