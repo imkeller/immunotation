@@ -5,9 +5,11 @@
 #'
 #' @examples
 get_valid_organisms <- function() {
+    organism_children <- mro.obo$children$`OBI:0100026`
     mro.obo$name[organism_children]
 }
 valid_organisms <- get_valid_organisms()
+
 # get a list of terms
 get_name <- function(term) {
     get_term_property(mro.obo, property_name = "name", term, as_names = FALSE)

@@ -4,7 +4,7 @@
 \alias{get_serotypes}
 \title{get_serotypes}
 \usage{
-get_serotypes(allele_list)
+get_serotypes(allele_list, organism = "human", mhc_type = c("MHC-I", "MHC-II"))
 }
 \arguments{
 \item{allele_list}{}

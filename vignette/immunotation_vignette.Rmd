@@ -31,7 +31,7 @@ MHC (major histocompatibility complex) molecules are a family of diverse cell su
 Reproducible and consistent annotation of HLA alleles in large-scale bioinformatic workflows remains challenging, because the available reference databases and software tools often utilize different HLA naming schemes. This inconsistency mainly results from the different levels of evidence at which HLA allele information is determined (e.g. sequencing protocol or antibody typing).
 
 
-### MHC restriction onology
+### MHC restriction ontology
 
 ### Diverse HLA naming schemes
 - Protein groups and NMPD MAC (Multiple allele codes)
@@ -78,15 +78,22 @@ Install from github using the devtools library:
 
 species
 
+However, very little information is contained for the species 
+grass carp, clawed frog, cotton-top tamarin, giant panda, sheep, marmoset
+contain little information.
+
 ```{r}
 get_valid_organisms()
+```
+```{r}
+retrieve_lookup_table(organism = "human")
 ```
 
 
 numbers
 
 ```{r}
-df <- retrieve_lookup_table(organism = "human")
+df <- retrieve_lookup_table(organism = "duck")
 ```
 
 ```{r}
@@ -100,45 +107,47 @@ df %>%
 ### Functions for name conversions
 
 ```{r}
-allele_list1 <- c("A*01:01:01", "A*03:01:01",
+allele_list1 <- c("A*01:01:01", "A*02:01:01",
                 "B*39:01:01", "B*07:02:01", 
                 "C*08:01:01", "C*01:02:01")
-allele_list2 <- c("DPB1*14:01:01", "DPB1*02:01:02",
+allele_list2 <- c("DPA1*01:03:01", "DPA1*01:04:01",
+                  "DPB1*14:01:01", "DPB1*02:01:02",
                 "DQA1*02:01:01", "DQA1*05:03",
                 "DQB1*02:02:01", "DQB1*06:09:01",
+                "DRA*01:01",
                 "DRB1*10:01:01", "DRB1*14:02:01")
-
-allele_list3 <- c("A*24:459", "A*26:01:01", 
-                  "B*38:01:01", "B*51:01:01", 
-                  "C*01:02:18", "C*12:03:01")
-
-allele_list4 <- c("DPA1*01:03:01", "DPA1*01:04:01",
-                  "DPB1*104:01:01", "DPB1*04:02:01",
-                  "DQA1*05:05:01", "DQA1*01:02:01",
-                  "DQB1*05:04", 
-                  "DRB1*11:01:01", "DRB1*01:01:01")
-
-allele_list5 <- c("A*02:01:126", "A*24:02:118",
-                  "B*35:288", "B*18:01:01",
-                  "C*04:01:88")
-
 ```
 
 Get protein complexes
 ```{r}
 get_mhcpan_input(allele_list1, mhc_class = "MHC-I")
-get_mhcpan_input(allele_list4, mhc_class = "MHC-II")
-get_mhcpan_input(allele_list5, mhc_class = "MHC-I")
+```
+
+```{r}
+get_mhcpan_input(allele_list2, mhc_class = "MHC-II")
 ```
 Get serotypes
 
 ```{r}
-get_serotypes(allele_list1)
+get_serotypes(allele_list1, mhc_type = "MHC-I")
 ```
-
+```{r}
+get_serotypes(allele_list2, mhc_type = "MHC-II")
+```
 
 ### Protein groups, MAC identifiers
 
+# Protein and gene groups
+
+# MACUI
+
+```{r}
+allele_list3 <- c("A*01:01:01", "A*02:01:01")
+encode_MAC(allele_list3)
+```
+```{r}
+decode_MAC
+```
 
 
 ## Functions related to worldwide population frequencies
@@ -163,6 +172,11 @@ sel2 <- query_allele_frequencies(hla_locus = "B", hla_population = 1986)
 
 DT::datatable(sel2)
 ```
+```{r}
+sel2a <- query_allele_frequencies(hla_locus = "B", hla_population = 3089)
+
+DT::datatable(sel2a)
+```
 
 ### comparison of different datasets from same population
 
@@ -186,57 +200,6 @@ sel4 <- query_population_detail(as.numeric(sel1$population_id))
 # only select the first 5 columns to discplay in table
 DT::datatable(sel4[1:5], options = list(scrollX = TRUE))
 ```
-
-### haplotype frequencies
-
-
-## Example workflow:
-### RNA sequencing
-
-# Get all MHC proteins containing a specific MHCallele
-
-Given a list of MHC alleles, derive all possible combinations for protein complexes 
-Result table should include: locus, MHC restriction, chains, protein complex
-input allele list is output of arcasHLA
-
-Sample output:
-{"A": ["A*01:01:01", "A*03:01:01"], 
- "B": ["B*39:01:01", "B*07:02:01"], 
- "C": ["C*08:01:01", "C*01:02:01"], 
- "DPB1": ["DPB1*14:01:01", "DPB1*02:01:02"], 
- "DQA1": ["DQA1*02:01:01", "DQA1*05:03"], 
- "DQB1": ["DQB1*02:02:01", "DQB1*06:09:01"], 
- "DRB1": ["DRB1*10:01:01", "DRB1*14:02:01"]}
-
-```{r}
-allele_list1 <- c("A*01:01:01", "A*03:01:01",
-                "B*39:01:01", "B*07:02:01", 
-                "C*08:01:01", "C*01:02:01")
-allele_list2 <- c("DPB1*14:01:01", "DPB1*02:01:02",
-                "DQA1*02:01:01", "DQA1*05:03",
-                "DQB1*02:02:01", "DQB1*06:09:01",
-                "DRB1*10:01:01", "DRB1*14:02:01")
-```
-
-
-
-```{r}
-orgid <- organism_input("human")
-
-protein_complexes <- assemble_protein_complex(organism_id = orgid)
-```
-
-
-```{r}
-retrieve_MHC_proteincomplex(
-    alleles = allele_list,
-    input_format = "allele",
-    organism = "human"
-)
-```
-
-### Prediction of MHC peptides in the most common alleles of a population
-
 
 ## References 
 

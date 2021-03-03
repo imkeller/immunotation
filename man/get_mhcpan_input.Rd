@@ -4,7 +4,7 @@
 \alias{get_mhcpan_input}
 \title{get_mhcpan_input}
 \usage{
-get_mhcpan_input(name_list)
+get_mhcpan_input(name_list, mhc_class = c("MHC-I", "MHC-II"))
 }
 \arguments{
 \item{name_list}{}

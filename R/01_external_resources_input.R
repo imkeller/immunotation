@@ -16,12 +16,6 @@ load_mro <- function() {
 mro.obo <- load_mro()
 
 
-
-
-
-
-
-
 # NetMHC list of valid chains
 # MHC I
 netmhcI_input_template <- readr::read_delim("https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/allele.list", delim = "\t",
@@ -32,7 +26,7 @@ netmhcI_input_template <- readr::read_delim("https://services.healthtech.dtu.dk/
 # The mouse entry is separated by 
 lines <- readr::read_lines("https://services.healthtech.dtu.dk/services/NetMHCIIpan-4.0/alleles_name.list")
 lines <- str_replace_all(lines, "\t+|\\s\\s+", "\t")
-netmhcII_input_template <- read_delim(lines, delim = "\t")
+netmhcII_input_template <- readr::read_delim(lines, delim = "\t")
 
 all_netmhcII_template <- c(netmhcII_input_template$DR, 
                            netmhcII_input_template$`DP alpha`,
@@ -66,4 +60,3 @@ p_group <- readr::read_delim("https://raw.githubusercontent.com/ANHIG/IMGTHLA/La
 p_group$locus <- str_extract(p_group$locus, pattern = "[:alnum:]+(?=\\*?)")
 
 unique(p_group$locus)
-

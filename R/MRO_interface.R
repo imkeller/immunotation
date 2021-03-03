@@ -1,8 +1,13 @@
 # get a list of all valid organisms
 # Organism OBI:0100026
-
-organism_children <- mro.obo$children$`OBI:0100026`
-
+#' organism_input
+#'
+#' @param organism 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 organism_input <- function(organism) {
     # error when organism wrong
     stopifnot("Organism name invalid" = organism %in% valid_organisms)
@@ -91,6 +96,7 @@ retrieve_lookup_table <- function(organism) {
 
 find_intersection_ids <- function(intersection_list, int_list) {
     hits <- sapply(intersection_list, grep, x = int_list)
+    if (length(hits[[1]]) == 0) {hits <- NA}
     names(int_list)[hits]
 }
 
@@ -106,7 +112,9 @@ extract_mhc_type_table <- function(species_locus, protein_masked_intersections) 
     all_chains <- find_children(masked_protein_chains)
     # assumption that ids are always 11 characters long
     chains <- unlist(all_chains, use.names = FALSE)
-    names(chains) <- substr(names(unlist(all_chains)),1,11)
+    if (!is.null(chains)) {
+        names(chains) <- substr(names(unlist(all_chains)),1,11)
+    }
     return(chains)
 }
 
@@ -134,7 +142,7 @@ assemble_lookup <- function(organism_id,
     protein_masked_intersections <- mro.obo$intersection_of[grep("PR:000000001", mro.obo$intersection_of)]
     
     tables <- sapply(species_loci, extract_mhc_type_table, 
-                     protein_masked_intersections = protein_masked_intersections)
+                     protein_masked_intersections = protein_masked_intersections, simplify = FALSE)
     
     unlisted_tables <- unlist(tables)
     names_chains <- names(unlisted_tables)
@@ -221,6 +229,14 @@ extract_mhc_complex_table <- function(complex_sublist_list, mhc_type) {
 
 
 
+#' assemble_protein_complex
+#'
+#' @param organism_id 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 assemble_protein_complex <- function(organism_id) {
     # MHC class I protein complex: MRO:0001355
     # MHC class II protein complex: MRO:0001356

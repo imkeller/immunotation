@@ -34,7 +34,9 @@ get_mhcpan_input <- function(name_list, mhc_class = c("MHC-I", "MHC-II")) {
         # since there is only one chain this is easy
         mhc_name_list <- sapply(protein_chain_names, convert_naming, add_hla = TRUE, add_star = FALSE)
         # check that they are allowed in the MHC input
-        valid <- all(sapply(mhc_name_list, function(mhc_name){mhc_name %in% netmhcI_input_template$netmhc_input}))
+        valid_in_reference <- sapply(mhc_name_list, function(x) x %in% netmhcI_input_template$netmhc_input)
+        if (!all(valid_in_reference)) {warning(paste(mhc_name_list[!valid_in_reference], "not in NetMHCpan input list.\n"))}
+        mhc_name_list <- mhc_name_list[valid_in_reference]
     } else if (mhc_class == "MHC-II") {
         # check which chains belong together
         # convert to NetMHCIIpan format: HLA-DPA10103-DPB10101
@@ -46,8 +48,13 @@ get_mhcpan_input <- function(name_list, mhc_class = c("MHC-I", "MHC-II")) {
 build_mhcII_complexes <- function(protein_chain_names) {
     # check what is present
     valid_in_reference <- sapply(protein_chain_names, function(x) x %in% all_netmhcII_template)
-    warning(paste(protein_chain_names[!valid_in_reference], "not in NetMHCIIpan input list."))
+    # check if there are DRA alleles (they are not relevant in the netmhciipan list)
+    valid_in_reference <- valid_in_reference | grepl("DRA", protein_chain_names)
     
+    if(!all(valid_in_reference)) {
+        warning(paste(protein_chain_names[!valid_in_reference], "not in NetMHCIIpan input list.\n"))
+    }
+
     protein_chain_names_valid <- protein_chain_names[valid_in_reference]       
     
     # DPA1 DPB1
@@ -59,10 +66,8 @@ build_mhcII_complexes <- function(protein_chain_names) {
     # DRA DRB
     drb <- protein_chain_names_valid[grep("DRB", protein_chain_names_valid)]
     drb <- sapply(drb, convert_naming, add_hla = FALSE, add_star = TRUE, remove_colon = TRUE, star = "_")
-    str_c(c(drb, dq_complexes, dp_complexes), sep = "", collapse = ",")
+    c(drb, dq_complexes, dp_complexes)
 }
-
-# not found  HLA-DQA10505-DQB10504  HLA-DQA10102-DQB10504
 
 assemble_dp_dq <- function(protein_chain_names, type = c("DP", "DQ")) {
     if (type == "DP") {
@@ -142,6 +147,14 @@ derive_protein_group <- function(allele_name) {
     g_group_name
 }
 
+# The protein complex table for humans can be assembled before, because it takes quite some time
+# get the protein lookup table
+#' mro.obo
+#' @details   \code{human_protein_complex_table}: human_protein_complex_table.
+#' @import ontologyIndex
+#' @export
+human_protein_complex_table <- assemble_protein_complex(organism_id = organism_input("human"))
+
 # Serotypes
 #' get_serotypes
 #'
@@ -151,17 +164,26 @@ derive_protein_group <- function(allele_name) {
 #' @export
 #'
 #' @examples
-get_serotypes <- function(allele_list) {
-    chain_list <- simplify_allele_naming(allele_list)
+get_serotypes <- function(allele_list, organism = "human", mhc_type = c("MHC-I", "MHC-II")) {
+    chain_list <- sapply(allele_list, reformat_allele)
     
     # get the protein lookup table
-    orgid <- organism_input("human")
-    
-    protein_complexes <- assemble_protein_complex(organism_id = orgid)
-    
+    if (organism == "human") {
+        protein_complexes <- human_protein_complex_table
+    } else {
+        orgid <- organism_input(organism)
+        protein_complexes <- assemble_protein_complex(organism_id = orgid)
+    }
+
     # filter the matches to alpha name
     full_chain_list <- sapply(chain_list, function(X) paste0("HLA-", X, " chain"))
-    filtered_complexes <- protein_complexes[protein_complexes$alpha_name %in% full_chain_list,]
+    if (mhc_type == "MHC-I") {
+        filtered_complexes <- protein_complexes[protein_complexes$alpha_name %in% full_chain_list, ]
+    } else if (mhc_type == "MHC-II") {
+        filtered_complexes <- protein_complexes[protein_complexes$alpha_name %in% full_chain_list & 
+                                                    protein_complexes$beta_name %in% full_chain_list, ]
+    } else {stop("mhc_type needs to be MHC-I or MHC-II")}
+    
     named_serotype_list <- filtered_complexes$serotype_name
     names(named_serotype_list) <- filtered_complexes$alpha_name
     serotypes <- named_serotype_list[full_chain_list]
