@@ -15,3 +15,8 @@ assemble_protein_complex(organism_id)
 \description{
 assemble_protein_complex
 }
+\examples{
+org_id <- organism_input("mouse")
+assemble_protein_complex(org_id)
+
+}

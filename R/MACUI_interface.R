@@ -1,7 +1,5 @@
 # MACUI from https://hml.nmdp.org/mac
 
-library(curl)
-
 # ENCODE --------
 
 assemble_encode_curlopts <- function(allele_names) {
@@ -10,6 +8,13 @@ assemble_encode_curlopts <- function(allele_names) {
     hla_string
 }
 
+#' create_encode_handle
+#'
+#' @param allele_names 
+#'
+#' @return curl handle
+#' @import curl
+#'
 create_encode_handle <- function(allele_names) {
     h <- new_handle()
     opts_string <- assemble_encode_curlopts(allele_names)
@@ -17,6 +22,13 @@ create_encode_handle <- function(allele_names) {
     handle_setheaders(h, "Content-Type" = "text/plain")
 }
 
+#' fetch_encoded_MAC
+#'
+#' @param handle 
+#'
+#' @return curl handle fetch
+#' @import curl
+#'
 fetch_encoded_MAC <- function(handle) {
     res <- curl_fetch_memory("https://hml.nmdp.org/mac/api/encode", 
                              handle = handle)
@@ -29,10 +41,14 @@ fetch_encoded_MAC <- function(handle) {
 #'
 #' @return encoded MAC 
 #' @export
+#' @import curl
 #'
 #' @examples
+#' allele_list <- c("A*01:01:01", "A*02:01:01", "A*03:01")
+#' encode_MAC(allele_list)
+#' 
 encode_MAC <- function(allele_list) {
-    handle <- create_handle(allele_list)
+    handle <- create_encode_handle(allele_list)
     curl_res <- fetch_encoded_MAC(handle)
     rawToChar(curl_res$content)
 }
@@ -61,6 +77,9 @@ fetch_decoded_MAC <- function(MAC) {
 #' @export
 #'
 #' @examples
+#' MAC <- "A*01:ATJNV"
+#' decode_MAC(MAC)
+#' 
 decode_MAC <- function(MAC) {
     curl_res <- fetch_decoded_MAC(MAC)
     rawToChar(curl_res$content)

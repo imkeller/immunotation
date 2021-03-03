@@ -85,15 +85,11 @@ contain little information.
 ```{r}
 get_valid_organisms()
 ```
-```{r}
-retrieve_lookup_table(organism = "human")
-```
-
 
 numbers
 
 ```{r}
-df <- retrieve_lookup_table(organism = "duck")
+df <- retrieve_lookup_table(organism = "human")
 ```
 
 ```{r}
@@ -103,6 +99,8 @@ df %>%
 
 # when no non-classical locus present (crab-eating macaque), problem
 ```
+
+Sequences
 
 ### Functions for name conversions
 
@@ -166,10 +164,6 @@ sel1 <- query_allele_frequencies(hla_selection = "A*02:01",
 DT::datatable(sel1)
 ```
 
-```{r}
-plot_allele_frequency(sel1)
-```
-
 
 **Example 2:** Querying the frequencies of alleles within the HLA-B locus for population "Peru Lamas City Lama" with population_id 1986. If you are not sure which population_id you should use, we recommend to search your population of interest in the *Population* section of the Allele Frequency Net Database and extract the population id from the url (last 4 digits).
 
@@ -182,6 +176,10 @@ DT::datatable(sel2)
 sel2a <- query_allele_frequencies(hla_locus = "B", hla_population = 3089)
 
 DT::datatable(sel2a)
+```
+
+```{r}
+plot_allele_frequency(sel1)
 ```
 
 ### comparison of different datasets from same population
@@ -209,4 +207,5 @@ DT::datatable(sel4[1:5], options = list(scrollX = TRUE))
 
 ## References 
 
-1. Gonzalez-Galarza FF, McCabe A, Santos EJ, Jones J, Takeshita LY, Ortega-Rivera ND, Del Cid-Pavon GM, Ramsbottom K, Ghattaoraya GS, Alfirevic A, Middleton D and Jones AR. Allele frequency net database (AFND) 2020 update: gold-standard data classification, open access genotype data and new query tools. Nucleic Acid Research 2020, 48, D783-8.
+1. Gonzalez-Galarza FF, McCabe A, Santos EJ at al. Allele frequency net database (AFND) 2020 update: gold-standard data classification, open access genotype data and new query tools. Nucleic Acid Research (2020).
+2. Vita R, Overton JA, Seymour E et al. An ontology for major histocompatibility restriction. J Biomed Semant (2016).

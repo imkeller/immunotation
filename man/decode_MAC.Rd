@@ -15,3 +15,8 @@ decoded MAC
 \description{
 decode_MAC
 }
+\examples{
+MAC <- "A*01:ATJNV"
+decode_MAC(MAC)
+
+}

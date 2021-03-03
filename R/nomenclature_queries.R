@@ -24,6 +24,8 @@
 #' @export
 #'
 #' @examples
+#' allele_list <- c("A*01:01:01","B*27:01")
+#' get_mhcpan_input(allele_list, mhc_class = "MHC-I")
 get_mhcpan_input <- function(name_list, mhc_class = c("MHC-I", "MHC-II")) {
     # convert to locus*dd:dd format
     protein_chain_names <- reformat_allele(name_list)
@@ -164,6 +166,9 @@ human_protein_complex_table <- assemble_protein_complex(organism_id = organism_i
 #' @export
 #'
 #' @examples
+#' allele_list <- c("A*01:01:01","B*27:01")
+#' get_serotypes(allele_list, mhc_type = "MHC-I")
+#' 
 get_serotypes <- function(allele_list, organism = "human", mhc_type = c("MHC-I", "MHC-II")) {
     chain_list <- sapply(allele_list, reformat_allele)
     

@@ -14,3 +14,7 @@ a list of organisms that are part of the annotation functions
 get_valid_organisms
 query the possible species
 }
+\examples{
+get_valid_organisms()
+
+}

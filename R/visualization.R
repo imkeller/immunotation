@@ -30,6 +30,14 @@ assemble_frequency_lat_long_df <- function(global_alleles) {
 #' @export
 #'
 #' @examples
+#' 
+#' # select frequency of given allele
+#' sel_allele_freq <- query_allele_frequencies(hla_selection = "A*02:01", 
+#' hla_sample_size_pattern = "bigger_than", 
+#' hla_sample_size = 10000, standard="g")
+#' 
+#' plot_allele_frequency(sel_allele_freq)
+#' 
 plot_allele_frequency <- function(allele_frequency) {
     
     df_lat_long <- assemble_frequency_lat_long_df(allele_frequency)

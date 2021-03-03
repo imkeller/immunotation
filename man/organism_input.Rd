@@ -15,3 +15,7 @@ organism_input(organism)
 \description{
 organism_input
 }
+\examples{
+organism_input("duck")
+
+}

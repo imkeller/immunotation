@@ -15,3 +15,7 @@ Protein chain list as formatted for MHCpan input
 \description{
 get_mhcpan_input
 }
+\examples{
+allele_list <- c("A*01:01:01","B*27:01")
+get_mhcpan_input(allele_list, mhc_class = "MHC-I")
+}

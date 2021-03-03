@@ -4,6 +4,8 @@
 #' @export
 #'
 #' @examples
+#' get_valid_organisms()
+#' 
 get_valid_organisms <- function() {
     organism_children <- mro.obo$children$`OBI:0100026`
     mro.obo$name[organism_children]

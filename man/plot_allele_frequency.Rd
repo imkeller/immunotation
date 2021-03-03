@@ -15,3 +15,13 @@ ggplot
 \description{
 plot_allele_frequency
 }
+\examples{
+
+# select frequency of given allele
+sel_allele_freq <- query_allele_frequencies(hla_selection = "A*02:01", 
+hla_sample_size_pattern = "bigger_than", 
+hla_sample_size = 10000, standard="g")
+
+plot_allele_frequency(sel_allele_freq)
+
+}

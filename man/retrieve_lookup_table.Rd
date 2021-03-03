@@ -15,3 +15,7 @@ retrieve_lookup_table(organism)
 \description{
 retrieve_lookup_table
 }
+\examples{
+retrieve_lookup_table("mouse")
+
+}

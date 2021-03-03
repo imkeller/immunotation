@@ -15,3 +15,8 @@ encoded MAC
 \description{
 encode_MAC
 }
+\examples{
+allele_list <- c("A*01:01:01", "A*02:01:01", "A*03:01")
+encode_MAC(allele_list)
+
+}

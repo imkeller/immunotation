@@ -8,6 +8,8 @@
 #' @export
 #'
 #' @examples
+#' organism_input("duck")
+#' 
 organism_input <- function(organism) {
     # error when organism wrong
     stopifnot("Organism name invalid" = organism %in% valid_organisms)
@@ -86,6 +88,8 @@ build_netmhc_input <- function(  ) {
 #' @export
 #'
 #' @examples
+#' retrieve_lookup_table("mouse")
+#' 
 retrieve_lookup_table <- function(organism) {
     # check if the organism name is valid
     org_id <- organism_input(organism)
@@ -237,6 +241,9 @@ extract_mhc_complex_table <- function(complex_sublist_list, mhc_type) {
 #' @export
 #'
 #' @examples
+#' org_id <- organism_input("mouse")
+#' assemble_protein_complex(org_id)
+#' 
 assemble_protein_complex <- function(organism_id) {
     # MHC class I protein complex: MRO:0001355
     # MHC class II protein complex: MRO:0001356
@@ -257,7 +264,6 @@ assemble_protein_complex <- function(organism_id) {
     complete_table <- data.frame(mhc_type = 0, complex_type = 0, complex_name = 0, complex_status = 0, alpha_name = 0,  beta_name = 0, complex_serotype=0, serotype_name=0)
     # loop over mhc class
     for (mhc_type in names(complex_list)) {
-        print(mhc_type)
         complex_sublist <- complex_list[[mhc_type]]
         
         # complex types

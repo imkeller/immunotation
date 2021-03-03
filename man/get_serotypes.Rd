@@ -15,3 +15,8 @@ serotype
 \description{
 get_serotypes
 }
+\examples{
+allele_list <- c("A*01:01:01","B*27:01")
+get_serotypes(allele_list, mhc_type = "MHC-I")
+
+}
