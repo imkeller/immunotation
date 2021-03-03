@@ -8,8 +8,18 @@ Description: The package immunotation provides tools for consistent annotation o
 License: GPL-3
 Encoding: UTF-8
 LazyData: false
+Collate:
+    'external_resources_input.R'
+    'AFND_interface.R'
+    'MRO_interface_helper.R'  
+    'MRO_interface.R' 
+    'MACUI_interface.R'
+    'other_lookup_interface.R'
+    'nomenclature_queries.R'    
+    'AFND_queries.R'                       
+    'visualization.R'
 Depends: R (>= 3.6)
-Imports: rvest, stringr, ontologyIndex, curl
+Imports: rvest, stringr, ontologyIndex, curl, ggplot2
 Suggests: knitr, testthat
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
