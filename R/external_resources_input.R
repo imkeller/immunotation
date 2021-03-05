@@ -1,7 +1,7 @@
 #### Data ####
 
 load_mro <- function() {
-    obo_file_name <- "/home/katharina/Documents/synced/science_projects/method_development/comp_immuno/immunotation/inst/extdata/mro_mod.obo"
+    obo_file_name <- system.file("extdata", "mro_mod.obo", package = "immunotation")
     
     mro.obo <- ontologyIndex::get_OBO(obo_file_name, extract_tags="everything")
     
@@ -36,13 +36,6 @@ all_netmhcII_template <- c(netmhcII_input_template$DR,
                            netmhcII_input_template$`DQ beta`)
 all_netmhcII_template <- all_netmhcII_template[!is.na(all_netmhcII_template)]
 
-
-
-# AFND
-# Not sure if necessary
-pop_url_root <- "http://www.allelefrequencies.net/pop6001c.asp?pop_id=%s"
-
-freq_url_root <- "http://www.allelefrequencies.net/hla6006a.asp?hla_locus_type=%s&hla_locus=%s&hla_selection=%s&hla_population=%s&hla_sample_size_pattern=%s&hla_sample_size=%s&standard=%s"
 
 
 # G and P groups
