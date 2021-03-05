@@ -21,27 +21,52 @@ library(immunotation)
 
 ### MHC molecules
 
-MHC (major histocompatibility complex) molecules are a family of diverse cell surface complexes that are important for the coordination of adaptive immune responses. MHC molecules are divided into three classes: MHC class I, MHC class II, and non-classical MHC. MHC class I molecules present peptide antigens to CD8+ T cells, whereas MHC class II molecules present epitopes to CD4+ T cells. MHC class I complexes typically consist of one variable alpha chain and one invariant β2-microglobulin chain, whereas MHC class II molecules are composed of one alpha and one beta chain, which are both variable.
+MHC (major histocompatibility complex) molecules are a family of diverse cell surface complexes that present antigens to T cells. MHC molecules are divided into three classes (MHC class I, MHC class II, and non-classical MHC), which differ in their protein subunit composition and the types of receptors they can interact with. MHC class I molecules for example consist of one polymorphic $\alpha$-chain and one invariant $\beta$-chain ($\beta$2-microglobulin) and present peptide antigens to T cells that express the MHC-I specific co-receptor CD8. MHC class II molecules are typically composed of one $\alpha$- and one $\beta$-chain, which are both polymorphic. MHC class II molecules present peptide antigens to T cells that express the MHC-II specific co-receptor CD4. 
 
-MHC (major histocompatibility complex) molecules are cell surface complexes that present peptide antigens to T cells. This processed, also known as MHC-dependent antigen presentation, is essential for the coordination of adaptive immune responses. In humans, MHC molecules are encoded by highly variable HLA (human leukocyte antigen) genes encoded in the hyperpolymorphic HLA locus on chromosome 6. 
+The repertoire of peptide antigens presented on MHC molecules depends on the sequence of the genes encoded in the MHC locus of an individual. Since the adaptive immune response to an invading pathogen relies on MHC-dependent antigen presentation, a high diversity of MHC genes on population level is beneficial from an evolutionary point of view. Indeed, MHC molecules are polygenic, which means that the MHC locus contains several different genes encoding MHC class I and MHC class II molecules. Moreover, MHC genes are polymorphic, which means that on a population level, there exist multiple variants (alleles) of each gene.
 
-MHC restriction ontology
+Several experimental techniques exist to identify the different MHC genes, alleles and protein complexes. Protein complexes for example can be identified by binding of subtype-specific anti-MHC antibodies. The resulting information on the protein complex is called MHC serotype. Moreover, MHC genes and alleles can be identified by hybridization with sequence specific probes or by sequencing and mapping to reference databases. However, these techniques often  cover only specific regions of the MHC genes and thus do not allow a complete and unambiguous allele identification.
+
+The [IPD-IMGT/HLA](https://www.ebi.ac.uk/ipd/imgt/hla/) [1] and [IPD-MHC](https://www.ebi.ac.uk/ipd/mhc/) [2] databases provide a reference of all known MHC genes and alleles in different species. A systematic classification of MHC genes and proteins is provided in the [MHC restriction ontology (MRO)](https://github.com/IEDB/MRO) [3]. The annotation functions in the `immunotation` package use the classification scheme provided by the MRO.
 
 ### Hyperpolymorphic HLA genes in human populations
 
-The library of peptide antigens presented on MHC molecules highly depends on the HLA alleles genes present in an individual. The frequencies of individual HLA alleles varies substantially between worldwide human populations.
+In humans, MHC molecules are encoded by highly variable HLA (human leukocyte antigen) genes of the hyperpolymorphic HLA locus on chromosome 6. Up to date more than 28.000 different alleles have been registered in the [IPD-IMGT/HLA](http://hla.alleles.org/nomenclature/index.html) database [1].
 
-Reproducible and consistent annotation of HLA alleles in large-scale bioinformatic workflows remains challenging, because the available reference databases and software tools often utilize different HLA naming schemes. This inconsistency mainly results from the different levels of evidence at which HLA allele information is determined (e.g. sequencing protocol or antibody typing).
+**Nomenclature of HLA genes**
 
-### Diverse HLA naming schemes
-- Protein groups and NMPD MAC (Multiple allele codes)
-- old naming schemes
-- gene/ allele level
+HLA genes and alleles are named according to rules defined by the [WHO Nomenclature Committee for Factors of the HLA System](http://hla.alleles.org/nomenclature/naming.html). The following scheme depicts the components of a complete HLA allele name. In a deprecated naming scheme used before 2010, the components of the naming scheme were not separated by ":".
+
+HLA-(gene)\*(group):(protein):(coding region):(non-coding region)(suffix)
+
+| Term        | Description          | Example  |
+| ----------- |:-----------------:|:-----------------:|
+| gene        | Sum to 1 (± 0.015; or ± 0.05) | A, B, C, DPA1, DPB1, ... |
+| group       | group of HLA alleles with similar protein sequence (protein sequence homology) |  01 |
+| protein     | all HLA alleles with same protein sequence  | 01 |
+| coding region     | all HLA alleles with same DNA sequence in coding region | 01 |
+| non-coding region     | all HLA alleles with same DNA sequence in non-coding region | 01 |
+| suffix    | indicates changes expression level (e.g. N - not expressed, L - low surface expression)  | N |
+
+For example:
+
+* *HLA-A\*01:01* and *HLA-A\*01:02* - have a similar but not identical protein sequence
+* *HLA-A\*01:01:01* and *HLA-A\*01:01:02* - have the same protein sequence but slightly different DNA sequences in coding region 
+
+**Protein and gene groups**
+
+[*G groups*](http://hla.alleles.org/alleles/g_groups.html) are groups of HLA alleles that have identical *nucleotide* sequences across the exons encoding the peptide binding domains.
+
+[*P groups*](http://hla.alleles.org/alleles/g_groups.html) are groups of HLA alleles that have identical *protein* sequences in the peptide binding domains.
+
+**MAC (Multiple allele codes)**
+
+The National Marrow Donor Program (NMDP) uses [multiple allele codes (MAC)](https://bioinformatics.bethematchclinical.org/hla-resources/allele-codes/allele-code-lists/) to facilitate the reporting and comparison of HLA alleles [4]. MAC represent groups of HLA alleles and are useful when the HLA typing is ambiguous and does not allow to narrow down one single allele from a list of alleles. The `immunotation` packages provides automated access to the [MAC conversion tools](https://hml.nmdp.org/MacUI/) provided by NMDP.
 
 ### Variation of HLA alleles across human populations
-- AFND database
 
-The Allele Frequency Net Database (AFND, http://www.allelefrequencies.net/) is a repository for immune gene frequencies in different populations worldwide (Gonzalez-Galarza et al. 2020). In addition to a large collection of HLA alle frequency datasets, the database also contains datasets for allele frequencies of KIR (Killer Cell Immunoglobulin-like Receptor) genes, MIC (Major histocompatibility complex class I chain related) and cytokine genes. The current version of AFNDquery allows the automated R access to the HLA related datasets in AFND.
+The frequencies of individual HLA alleles varies substantially between worldwide human populations.
+The [Allele Frequency Net Database (AFND)](http://www.allelefrequencies.net/) is a repository for immune gene frequencies in different populations worldwide [5]. In addition to a large collection of HLA allele frequency datasets, the database also contains datasets for allele frequencies of KIR (Killer Cell Immunoglobulin-like Receptor) genes, MIC (Major histocompatibility complex class I chain related) and cytokine genes. The current version of the `immunotation` package allows the automated R access to the HLA related datasets in AFND.
 
 The HLA frequency datasets in AFND are classified according to the following standards:
 
@@ -49,45 +74,52 @@ The HLA frequency datasets in AFND are classified according to the following sta
 | ----------- |:-----------------:|:-----------------:|:----------:|
 | Allele frequency      | Sum to 1 (± 0.015; or ± 0.05) | Sum to 1 (± 0.015; or ± 0.05) | other |
 | Sample size     | >= 50 individuals      |   any | any |
-| Resolution | four or more digits      | two or more digits | other |
+| Resolution of allele frequency | four or more digits      | two or more digits | other |
 
 ## Scope of the package
 
-The package `immunotation` provides tools for consistent annotation of HLA genes in typical immunoinformatics workflows. 
-The package provides functions that allow mapping between different HLA naming schemes and that are based on the MHC restriction ontology (MRO) [cite]. 
-The package also provides an automated access to HLA alleles frequencies in worldwide human reference populations stored in the Allele Frequency Net Database [cite].
+The `immunotation` package provides tools for consistent annotation of HLA genes, alleles and protein complexes. The package currently has two main functional modules: 
 
-## Installation
+*1. Conversion and nomenclature functions:*
 
-Install from github using the devtools library:
+* access to annotations of MHC loci, genes, protein complexes and serotypes in different species
+* conversion between different levels of HLA annotation, namely specific functions to convert between input and output of different immunoinformatics tools
+* mapping of alleles and G groups and P groups.
+* mapping of HLA allele groups and MAC
 
-```{r}
-#library(devtools)
+*2. Access to HLA allele frequencies:*
 
-#devtools::install_github("imkeller/immunotation")
+* automated access to datasets stored in the [AFND](http://www.allelefrequencies.net/)
+* querying and visualization of HLA allele frequencies in human populations worldwide
+
+### Installation
+
+Install `immunotation` from github using the devtools library:
+
+```{r, eval=FALSE}
+library(devtools)
+devtools::install_github("imkeller/immunotation")
 ```
 
-## MHC ontology
+## HLA genes, alleles, protein complexes and serotypes
 
-### Serotypes, genes, alleles in MRO ontology
+### Accessing information from MRO
 
-species
-
-However, very little information is contained for the species 
-grass carp, clawed frog, cotton-top tamarin, giant panda, sheep, marmoset
-contain little information.
+The MRO provides consistent annotation of MHC genes and molecules in the following species. Please note that the information for grass carp, clawed frog, cotton-top tamarin, giant panda, sheep and marmoset is limited and might lead to unexpected function behavior (such as return empty table).
 
 ```{r}
 get_valid_organisms()
 ```
 
-numbers
+The `retrieve_lookup_table` function allows to build a lookup table of all annotated chains in a given species. The table specifies the locus, the gene and the chain name.
 
 ```{r}
 df <- retrieve_lookup_table(organism = "human")
+
+DT::datatable(head(df, n=30))
 ```
 
-```{r, warnings = FALSE}
+```{r, message = FALSE}
 sum_table <- df %>%
     group_by(mhc_type_names, locus_names) %>%
     summarize(number_of_alleles = n())
@@ -95,17 +127,7 @@ sum_table <- df %>%
 DT::datatable(sum_table)
 ```
 
-Serotypes 
-```{r}
-get_serotypes(allele_list1, mhc_type = "MHC-I")
-```
-```{r}
-get_serotypes(allele_list2, mhc_type = "MHC-II")
-```
-
-Sequences
-
-### Functions for mapping between different naming schemes
+The `get_serotype` function can be used to query the serotype of encoded protein complexes for a given HLA genotype. The allele lists represent the MHC class I and MHC class II genotype of an exemplary donor.
 
 ```{r}
 allele_list1 <- c("A*01:01:01", "A*02:01:01",
@@ -119,7 +141,20 @@ allele_list2 <- c("DPA1*01:03:01", "DPA1*01:04:01",
                 "DRB1*10:01:01", "DRB1*14:02:01")
 ```
 
-Get protein complexes
+Retrieve the serotype of MHC class I molecules: 
+
+```{r}
+get_serotypes(allele_list1, mhc_type = "MHC-I")
+```
+Retrieve the serotype of MHC class I molecules: 
+
+```{r}
+get_serotypes(allele_list2, mhc_type = "MHC-II")
+```
+
+### Functions for mapping between different naming schemes
+
+You can directly obtain a protein complex format that is suitable for input to NetMHCpan and NetMHCIIpan using the `get_mhc_pan` function.
 ```{r}
 get_mhcpan_input(allele_list1, mhc_class = "MHC-I")
 ```
@@ -127,18 +162,17 @@ get_mhcpan_input(allele_list1, mhc_class = "MHC-I")
 ```{r}
 get_mhcpan_input(allele_list2, mhc_class = "MHC-II")
 ```
-Get serotypes
 
-### Protein groups, MAC identifiers
+### Encoding and secoding MAC
 
-# Protein and gene groups
-
-# MACUI
+Encode a list of alleles into MAC using the `encode_MAC` function.
 
 ```{r}
 allele_list3 <- c("A*01:01:01", "A*02:01:01", "A*03:01")
 encode_MAC(allele_list3)
 ```
+Decode a MAC into a list of alleles using the `decode_MAC` function.
+
 ```{r}
 MAC1 <- "A*01:AYMG"
 decode_MAC(MAC1)
@@ -172,13 +206,11 @@ sel2a <- query_allele_frequencies(hla_locus = "B", hla_population = 3089)
 DT::datatable(sel2a)
 ```
 
+Use the `plot_allele_frequency` function to visualize the frequencies of a given allele on a world map. The input of `plot_allele_frequency` is a data table that can be produced using the `query_allele_frequencies` function.
+
 ```{r}
 plot_allele_frequency(sel1)
 ```
-
-### comparison of different datasets from same population
-
-### display a geographical location using geographic coordinates
 
 ## Querying population metainformation
 
@@ -195,11 +227,18 @@ DT::datatable(sel3, options = list(scrollX = TRUE))
 ```{r}
 sel4 <- query_population_detail(as.numeric(sel1$population_id))
 
-# only select the first 5 columns to discplay in table
+# only select the first 5 columns to display in table
 DT::datatable(sel4[1:5], options = list(scrollX = TRUE))
 ```
 
 ## References 
 
-1. Gonzalez-Galarza FF, McCabe A, Santos EJ at al. Allele frequency net database (AFND) 2020 update: gold-standard data classification, open access genotype data and new query tools. Nucleic Acid Research (2020).
-2. Vita R, Overton JA, Seymour E et al. An ontology for major histocompatibility restriction. J Biomed Semant (2016).
+[1] Robinson J, Barker DJ, Georgiou X et al. IPD-IMGT/HLA Database. Nucleic Acids Research (2020)
+
+[2] Maccari G, Robinson J, Ballingall K et al. IPD-MHC 2.0: an improved inter-species database for the study of the major histocompatibility complex. Nucleic Acids Research (2017)
+
+[3] Vita R, Overton JA, Seymour E et al. An ontology for major histocompatibility restriction. J Biomed Semant (2016).
+
+[4] Milius RP, Mack SJ, Hollenbach JA et al. Genotype List String: a grammar for describing HLA and KIR genotyping results in a text string. Tissue Antigens (2013). 
+
+[5] Gonzalez-Galarza FF, McCabe A, Santos EJ at al. Allele frequency net database (AFND) 2020 update: gold-standard data classification, open access genotype data and new query tools. Nucleic Acid Research (2020).
