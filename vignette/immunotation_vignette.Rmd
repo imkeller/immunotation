@@ -114,7 +114,7 @@ get_valid_organisms()
 The `retrieve_lookup_table` function allows to build a lookup table of all annotated chains in a given species. The table specifies the locus, the gene and the chain name.
 
 ```{r}
-df <- retrieve_lookup_table(organism = "human")
+df <- retrieve_chain_lookup_table(organism = "human")
 
 DT::datatable(head(df, n=30))
 ```
@@ -131,14 +131,13 @@ The `get_serotype` function can be used to query the serotype of encoded protein
 
 ```{r}
 allele_list1 <- c("A*01:01:01", "A*02:01:01",
-                "B*39:01:01", "B*07:02:01", 
-                "C*08:01:01", "C*01:02:01")
+                  "B*39:01:01", "B*07:02:01", 
+                  "C*08:01:01", "C*01:02:01")
 allele_list2 <- c("DPA1*01:03:01", "DPA1*01:04:01",
                   "DPB1*14:01:01", "DPB1*02:01:02",
-                "DQA1*02:01:01", "DQA1*05:03",
-                "DQB1*02:02:01", "DQB1*06:09:01",
-                "DRA*01:01",
-                "DRB1*10:01:01", "DRB1*14:02:01")
+                  "DQA1*02:01:01", "DQA1*05:03",
+                  "DQB1*02:02:01", "DQB1*06:09:01",
+                  "DRA*01:01", "DRB1*10:01:01", "DRB1*14:02:01")
 ```
 
 Retrieve the serotype of MHC class I molecules: 
@@ -146,7 +145,8 @@ Retrieve the serotype of MHC class I molecules:
 ```{r}
 get_serotypes(allele_list1, mhc_type = "MHC-I")
 ```
-Retrieve the serotype of MHC class I molecules: 
+Retrieve the serotype of MHC class II molecules:
+(In the current version of `immunotation` serotypes are only returned when the complete molecule ($\alpha$- and $\beta$- chain) is annotated in MRO.)
 
 ```{r}
 get_serotypes(allele_list2, mhc_type = "MHC-II")
@@ -163,7 +163,21 @@ get_mhcpan_input(allele_list1, mhc_class = "MHC-I")
 get_mhcpan_input(allele_list2, mhc_class = "MHC-II")
 ```
 
-### Encoding and secoding MAC
+### Retrieving G and P groups
+
+For every allele in the list return the corresponding G group. If the allele is not part of a G group, the original allele name is returned.
+
+```{r}
+get_G_group(allele_list2)
+```
+
+For every allele in the list return the corresponding P group. If the allele is not part of a P group, the original allele name is returned.
+
+```{r}
+get_P_group(allele_list1)
+```
+
+### Encoding and decoding MAC
 
 Encode a list of alleles into MAC using the `encode_MAC` function.
 

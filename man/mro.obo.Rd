@@ -5,7 +5,7 @@
 \alias{mro.obo}
 \title{mro.obo}
 \format{
-An object of class \code{ontology_index} of length 25.
+An object of class \code{ontology_index} of length 18.
 }
 \usage{
 mro.obo

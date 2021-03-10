@@ -73,14 +73,8 @@ retrieve_MHC_proteincomplex <- function(alleles = allele_list,
     
 }
 
-build_netmhc_input <- function(  ) {
-    # format needed for netMHCpan: 
-    # DRB1_0101
-    # HLA-DPA10104-DPB10202
-}
 
-
-#' retrieve_lookup_table
+#' retrieve_chain_lookup_table
 #'
 #' @param organism 
 #'
@@ -88,9 +82,9 @@ build_netmhc_input <- function(  ) {
 #' @export
 #'
 #' @examples
-#' retrieve_lookup_table("mouse")
+#' retrieve_chain_lookup_table("mouse")
 #' 
-retrieve_lookup_table <- function(organism) {
+retrieve_chain_lookup_table <- function(organism) {
     # check if the organism name is valid
     org_id <- organism_input(organism)
     assemble_lookup(organism_id = org_id,

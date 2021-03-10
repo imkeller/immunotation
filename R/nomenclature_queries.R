@@ -126,8 +126,29 @@ derive_gene_group <- function(allele_name) {
         reg_expression_name <- paste0("^",allele,"G")
         match_position <- grep(reg_expression_name,locus_g_group$g_group_name)
     }
-    g_group_name <- unique(locus_g_group$g_group_name[match_position])
-    paste0(locus,"*",g_group_name)
+    # if nothing found, keep original allele name
+    if (length(match_position) == 0) {
+        g_group_return <- allele_name
+    } else {
+        g_group_name <- unique(locus_g_group$g_group_name[match_position])
+        g_group_return  <- paste0(locus,"*",g_group_name)      
+    }
+    g_group_return 
+}
+
+#' get_G_group
+#'
+#' @param allele_list List of alleles.
+#'
+#' @return Named list of G-groups the input alleles belong to.
+#' @export
+#'
+#' @examples
+#' allele_list <- c("DQB1*02:02:01", "DQB1*06:09:01")
+#' get_G_group(allele_list)
+#' 
+get_G_group <- function(allele_list) {
+    sapply(allele_list, derive_gene_group)
 }
 
 derive_protein_group <- function(allele_name) {
@@ -138,6 +159,12 @@ derive_protein_group <- function(allele_name) {
     locus_p_group <- p_group[p_group$locus == locus,]
     # check if can be found in database
     reg_expression_group <- paste0("/",allele,"/|^",allele,"/|/",allele,"$")
+    # if the allele is given at a xx:xx:xx level, also allow for further matching to /01:03:01:xx/|^01:03:01:xx/|/01:03:01:xx
+    # this is necessary because a lot of alleles in p group file are given at the xx:xx:xx:xx level
+    if(str_count(allele_name, ":") > 1 ) {
+        add_regexp_group <- paste0("|/",allele,":|^",allele,":")
+        reg_expression_group <- paste0(reg_expression_group, add_regexp_group)
+    }
     match_position <- grep(reg_expression_group,locus_p_group$p_group)
     
     # if not found, search in gene group
@@ -145,9 +172,31 @@ derive_protein_group <- function(allele_name) {
         reg_expression_name <- paste0("^",allele,"P")
         match_position <- grep(reg_expression_name,locus_p_group$p_group_name)
     }
-    g_group_name <- unique(locus_g_group$g_group_name[match_position])
-    g_group_name
+    # if nothing found, keep original allele name
+    if (length(match_position) == 0) {
+        p_group_return <- allele_name
+    } else {
+        p_group_name <- unique(locus_p_group$p_group_name[match_position])
+        p_group_return  <- paste0(locus,"*",p_group_name)      
+    }
+    p_group_return
 }
+
+#' get_P_group
+#'
+#' @param allele_list 
+#'
+#' @return Named list of P-groups the input alleles belong to.
+#' @export
+#'
+#' @examples
+#' allele_list <- c("DQB1*02:02:01", "DQB1*06:09:01")
+#' get_P_group(allele_list)
+#' 
+get_P_group <- function(allele_list) {
+    sapply(allele_list, derive_protein_group)
+}
+
 
 # The protein complex table for humans can be assembled before, because it takes quite some time
 # get the protein lookup table
@@ -190,9 +239,8 @@ get_serotypes <- function(allele_list, organism = "human", mhc_type = c("MHC-I",
     } else {stop("mhc_type needs to be MHC-I or MHC-II")}
     
     named_serotype_list <- filtered_complexes$serotype_name
-    names(named_serotype_list) <- filtered_complexes$alpha_name
-    serotypes <- named_serotype_list[full_chain_list]
-    serotypes
+    names(named_serotype_list) <- filtered_complexes$complex_name
+    named_serotype_list 
 }
 
 # MHC II
