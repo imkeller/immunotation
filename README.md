@@ -23,7 +23,7 @@ HLA genes and alleles are named according to rules defined by the [WHO Nomenclat
 | Term        | Description          | Example  |
 | ----------- |:-----------------:|:-----------------:|
 | gene        | HLA gene | A, B, C, DPA1, DPB1, ... |
-| group       | group of HLA alleles with similar protein sequence\\(protein sequence homology) |  01 |
+| group       | group of HLA alleles with similar protein sequence (protein sequence homology) |  01 |
 | protein     | all HLA alleles with same protein sequence  | 01 |
 | coding region     | all HLA alleles with same DNA sequence in coding region | 01 |
 | non-coding region     | all HLA alleles with same DNA sequence in non-coding region | 01 |
@@ -53,7 +53,7 @@ The HLA frequency datasets in AFND are classified according to the following sta
 
 | Criteria        | Gold standard           | Silver standard  | Bronze standard |
 | ----------- |:-----------------:|:-----------------:|:----------:|
-| Allele frequency      | Sum to 1\\(± 0.015; or ± 0.05) | Sum to 1\\(± 0.015; or ± 0.05) | other |
+| Allele frequency      | Sum to 1 (± 0.015; or ± 0.05) | Sum to 1 (± 0.015; or ± 0.05) | other |
 | Sample size     | >= 50 individuals      |   any | any |
 | Resolution of allele frequency | four or more digits      | two or more digits | other |
 
