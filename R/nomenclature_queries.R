@@ -44,6 +44,8 @@ get_mhcpan_input <- function(name_list, mhc_class = c("MHC-I", "MHC-II")) {
         # convert to NetMHCIIpan format: HLA-DPA10103-DPB10101
         mhc_name_list <- build_mhcII_complexes(protein_chain_names)
     } else {stop("mhc_class schould be MHC-I or MHC-II.")}
+    # names should not appear, because the complexes for mhc-ii are composed of different elements of the original list
+    names(mhc_name_list) <- NULL
     mhc_name_list
 }
 

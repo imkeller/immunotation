@@ -21,7 +21,7 @@ library(immunotation)
 
 ### MHC molecules
 
-MHC (major histocompatibility complex) molecules are a family of diverse cell surface complexes that present antigens to T cells. MHC molecules are divided into three classes (MHC class I, MHC class II, and non-classical MHC), which differ in their protein subunit composition and the types of receptors they can interact with. MHC class I molecules for example consist of one polymorphic $\alpha$-chain and one invariant $\beta$-chain ($\beta$2-microglobulin) and present peptide antigens to T cells that express the MHC-I specific co-receptor CD8. MHC class II molecules are typically composed of one $\alpha$- and one $\beta$-chain, which are both polymorphic. MHC class II molecules present peptide antigens to T cells that express the MHC-II specific co-receptor CD4. 
+MHC (major histocompatibility complex) molecules are a family of diverse cell surface complexes that present antigens to T cells. MHC molecules are divided into three classes (MHC class I, MHC class II, and non-classical MHC), which differ in their protein subunit composition and the types of receptors they can interact with. MHC class I molecules for example consist of one polymorphic $\alpha$-chain and one invariant $\beta$-chain and present peptide antigens to T cells that express the MHC-I specific co-receptor CD8. MHC class II molecules are typically composed of one $\alpha$- and one $\beta$-chain, which are both polymorphic. MHC class II molecules present peptide antigens to T cells that express the MHC-II specific co-receptor CD4. 
 
 The repertoire of peptide antigens presented on MHC molecules depends on the sequence of the genes encoded in the MHC locus of an individual. Since the adaptive immune response to an invading pathogen relies on MHC-dependent antigen presentation, a high diversity of MHC genes on population level is beneficial from an evolutionary point of view. Indeed, MHC molecules are polygenic, which means that the MHC locus contains several different genes encoding MHC class I and MHC class II molecules. Moreover, MHC genes are polymorphic, which means that on a population level, there exist multiple variants (alleles) of each gene.
 
@@ -37,11 +37,11 @@ In humans, MHC molecules are encoded by highly variable HLA (human leukocyte ant
 
 HLA genes and alleles are named according to rules defined by the [WHO Nomenclature Committee for Factors of the HLA System](http://hla.alleles.org/nomenclature/naming.html). The following scheme depicts the components of a complete HLA allele name. In a deprecated naming scheme used before 2010, the components of the naming scheme were not separated by ":".
 
-HLA-(gene)\*(group):(protein):(coding region):(non-coding region)(suffix)
+**HLA-(gene)\*(group):(protein):(coding region):(non-coding region)(suffix)**
 
 | Term        | Description          | Example  |
 | ----------- |:-----------------:|:-----------------:|
-| gene        | Sum to 1 (± 0.015; or ± 0.05) | A, B, C, DPA1, DPB1, ... |
+| gene        | HLA gene | A, B, C, DPA1, DPB1, ... |
 | group       | group of HLA alleles with similar protein sequence (protein sequence homology) |  01 |
 | protein     | all HLA alleles with same protein sequence  | 01 |
 | coding region     | all HLA alleles with same DNA sequence in coding region | 01 |
