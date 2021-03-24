@@ -65,17 +65,19 @@ read_complete_allele_freq_table <- function(url) {
     page_nb <- get_nb_pages(rvest_tables[[4]])
     
     output_table <- data.frame()
-    # for 1-n pages query the allele frequencies
-    for (page_id in 1:page_nb) {
-        url_tmp <- paste0(url, "&page=", as.character(page_id), collapse = "")
-        html_input_tmp <- read_url(url_tmp)
-        rvest_tables_tmp <- html_table(html_input_tmp, fill = TRUE)
-        # add the population ID
-        pop_ids <- extract_population_id(html_input_tmp)
-        freq_table <- parse_allele_freq_html(rvest_tables_tmp[[5]])
-        freq_table$population_id <- pop_ids
-        
-        output_table <- rbind(output_table, freq_table)
+    if (length(page_nb) != 0) {
+        # for 1-n pages query the allele frequencies
+        for (page_id in 1:page_nb) {
+            url_tmp <- paste0(url, "&page=", as.character(page_id), collapse = "")
+            html_input_tmp <- read_url(url_tmp)
+            rvest_tables_tmp <- html_table(html_input_tmp, fill = TRUE)
+            # add the population ID
+            pop_ids <- extract_population_id(html_input_tmp)
+            freq_table <- parse_allele_freq_html(rvest_tables_tmp[[5]])
+            freq_table$population_id <- pop_ids
+            
+            output_table <- rbind(output_table, freq_table)
+        }
     }
     # return the final output table
     output_table
@@ -151,7 +153,7 @@ check_hla_locus <- function(hla_locus) {
 }
 
 check_hla_selection <- function(hla_selection) {
-    if (is.na(hla_selection)) {TRUE} else {
+    if (any(is.na(hla_selection))) {TRUE} else {
         # we do not check whether the indicated allele is in the database
         # we just check general formatting
         # hla_selection can be a list of alleles

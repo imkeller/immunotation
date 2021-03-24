@@ -184,6 +184,19 @@ derive_protein_group <- function(allele_name) {
     p_group_return
 }
 
+# get p group elements
+get_p_group_members <- function(p_group_name) {
+    locus_allele <- str_split(p_group_name, pattern = "\\*")[[1]]
+    locus <- locus_allele[[1]]
+    allele <- locus_allele[[2]]
+    p_group_selection <- p_group[p_group$locus == locus & !is.na(p_group$p_group_name),]
+    return_list <- p_group_selection$p_group[p_group_selection$p_group_name == allele]
+    if(length(return_list) == 0) {return(p_group_name)} else {
+        return_list <- str_split(return_list, pattern = "/")[[1]]
+        return_list <- str_c(locus,"*",return_list)
+        return(return_list)}
+}
+
 #' get_P_group
 #'
 #' @param allele_list 

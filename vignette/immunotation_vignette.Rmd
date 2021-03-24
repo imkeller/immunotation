@@ -198,6 +198,13 @@ decode_MAC(MAC1)
 **Example 1:** Querying the frequency of allele A*02:01 in all populations with more than 10,000 individuals and fulfilling the gold standard.
 
 ```{r}
+hla_selection <- build_allele_group("A*01:358")
+
+sel1 <- query_allele_frequencies(hla_selection = hla_selection, 
+                                hla_sample_size_pattern = "bigger_than", 
+                                hla_sample_size = 200, 
+                                standard="g")
+
 sel1 <- query_allele_frequencies(hla_selection = "A*02:01", 
                                 hla_sample_size_pattern = "bigger_than", 
                                 hla_sample_size = 10000, 
