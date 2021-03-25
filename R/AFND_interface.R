@@ -41,6 +41,12 @@ parse_allele_freq_html <- function(allele_freq_table) {
     colnames(allele_freq_table) <- c("line", "allele", "", "population", "perc_individuals_with_allele",
                                      "allele_frequency", "", "sample_size")
     allele_freq_table[c("allele","population","allele_frequency","sample_size")]
+} 
+
+parse_haplotype_freq_html <- function(allele_freq_table) {
+    colnames(allele_freq_table) <- c("line", "haplotype", "", "population", "perc_individuals_with_haplotype",
+                                     "", "sample_size", "")
+    allele_freq_table[c("haplotype","population","perc_individuals_with_haplotype","sample_size")]
 }
 
 #' extract_population_id
@@ -56,7 +62,45 @@ extract_population_id <- function(data) {
     str_extract(filtered_pop_hrefs , "\\d\\d\\d\\d$")
 }
 
-read_complete_allele_freq_table <- function(url) {
+read_complete_freq_table <- function(url, type = c("allele", "haplotype")) {
+    html_input <- read_url(url)
+    
+    rvest_tables <- html_table(html_input, fill = TRUE)
+    
+    output_table <- data.frame()
+    # get the number of pages that need to be read
+    # for some instances where no entries found,the page number is no indicated 
+    # return empty table in this case
+    if(length(rvest_tables) > 3) {
+        page_nb <- get_nb_pages(rvest_tables[[4]])
+    } else {return(output_table)}
+    
+    if (length(page_nb) != 0) {
+        # for 1-n pages query the allele frequencies
+        for (page_id in 1:page_nb) {
+            url_tmp <- paste0(url, "&page=", as.character(page_id), collapse = "")
+            html_input_tmp <- read_url(url_tmp)
+            rvest_tables_tmp <- html_table(html_input_tmp, fill = TRUE)
+            # add the population ID
+            pop_ids <- extract_population_id(html_input_tmp)
+            if (type == "allele") {
+                freq_table <- parse_allele_freq_html(rvest_tables_tmp[[5]])
+            } else if (type == "haplotype") {
+                freq_table <- parse_haplotype_freq_html(rvest_tables_tmp[[5]])
+            }
+            
+            freq_table$population_id <- pop_ids
+            
+            output_table <- rbind(output_table, freq_table)
+        }
+    }
+    # return the final output table
+    output_table
+}
+
+# HLA HAPLOTYPE FUNCTIONC
+
+read_complete_haplotype_freq_table <- function(url) {
     html_input <- read_url(url)
     
     rvest_tables <- html_table(html_input, fill = TRUE)
@@ -73,7 +117,7 @@ read_complete_allele_freq_table <- function(url) {
             rvest_tables_tmp <- html_table(html_input_tmp, fill = TRUE)
             # add the population ID
             pop_ids <- extract_population_id(html_input_tmp)
-            freq_table <- parse_allele_freq_html(rvest_tables_tmp[[5]])
+            freq_table <- parse_haplotype_freq_html(rvest_tables_tmp[[5]])
             freq_table$population_id <- pop_ids
             
             output_table <- rbind(output_table, freq_table)
@@ -139,6 +183,9 @@ read_population_detail <- function(url, population_id) {
 }
 
 
+# VALIDATION FUNCTIONS
+
+
 check_hla_locus <- function(hla_locus) {
     if (is.na(hla_locus)) {TRUE} else {
         # classical HLA loci
@@ -152,12 +199,19 @@ check_hla_locus <- function(hla_locus) {
         }}
 }
 
-check_hla_selection <- function(hla_selection) {
+check_hla_selection <- function(hla_selection, query_type) {
     if (any(is.na(hla_selection))) {TRUE} else {
         # we do not check whether the indicated allele is in the database
         # we just check general formatting
         # hla_selection can be a list of alleles
-        pattern_match <- grepl("^(\\w*|\\w*\\d)\\*\\d\\d", hla_selection)
+        if (query_type == "allele") {
+            # for alleles at least A*01 level is required
+            pattern_match <- grepl("^(\\w*|\\w*\\d)\\*\\d\\d", hla_selection)
+        } else if (query_type == "haplotype") {
+            # for haplotype A* level is ok to query any HLA-A allele
+            pattern_match <- grepl("^(\\w*|\\w*\\d)", hla_selection)  
+        } else {stop("query_type must be allele or haplotype")}
+        
         if (all(pattern_match)) {
             TRUE
         } else {
@@ -213,7 +267,8 @@ verify_parameters <- function(hla_locus,
                               hla_population,
                               hla_sample_size_pattern,
                               hla_sample_size,
-                              standard) {
+                              standard = "a",
+                              query_type = c("allele", "haplotype")) {
     
     # do the checks only if variables are not na
     if (all(is.na(c(hla_locus, hla_selection, hla_population,
@@ -225,7 +280,7 @@ verify_parameters <- function(hla_locus,
         all(check_standard(standard),
             check_sample_size(hla_sample_size_pattern, hla_sample_size),
             check_population(hla_population),
-            check_hla_selection(hla_selection),
+            check_hla_selection(hla_selection, query_type),
             check_hla_locus(hla_locus))
     }
 }

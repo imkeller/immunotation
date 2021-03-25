@@ -198,13 +198,6 @@ decode_MAC(MAC1)
 **Example 1:** Querying the frequency of allele A*02:01 in all populations with more than 10,000 individuals and fulfilling the gold standard.
 
 ```{r}
-hla_selection <- build_allele_group("A*01:358")
-
-sel1 <- query_allele_frequencies(hla_selection = hla_selection, 
-                                hla_sample_size_pattern = "bigger_than", 
-                                hla_sample_size = 200, 
-                                standard="g")
-
 sel1 <- query_allele_frequencies(hla_selection = "A*02:01", 
                                 hla_sample_size_pattern = "bigger_than", 
                                 hla_sample_size = 10000, 
@@ -214,7 +207,24 @@ DT::datatable(sel1)
 ```
 
 
-**Example 2:** Querying the frequencies of alleles within the HLA-B locus for population "Peru Lamas City Lama" with population_id 1986. If you are not sure which population_id you should use, we recommend to search your population of interest in the *Population* section of the Allele Frequency Net Database and extract the population id from the url (last 4 digits).
+```{r}
+hla_selection <- build_allele_group("A*01:358")
+
+sel1 <- query_allele_frequencies(hla_selection = hla_selection, 
+                                hla_sample_size_pattern = "bigger_than", 
+                                hla_sample_size = 200, 
+                                standard="g")
+```
+
+**Example 2:** Querying haplotype frequency
+
+```{r}
+haplotype_alleles <- c("A*02:01", "B*", "C*")
+query_haplotype_frequencies(hla_selection = haplotype_alleles)
+```
+
+
+**Example 3:** Querying the frequencies of alleles within the HLA-B locus for population "Peru Lamas City Lama" with population_id 1986. If you are not sure which population_id you should use, we recommend to search your population of interest in the *Population* section of the Allele Frequency Net Database and extract the population id from the url (last 4 digits).
 
 ```{r}
 sel2 <- query_allele_frequencies(hla_locus = "B", hla_population = 1986)

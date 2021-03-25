@@ -1,3 +1,4 @@
+
 convert_string <- function(value) {
     # we need this function to format the lists in the sting
     # and replace the NA values in the URL with ""
@@ -6,30 +7,11 @@ convert_string <- function(value) {
     else value
 }
 
-# FUNCTIONS FOR ALLELE QUERY
-
-assemble_url_freq <- function(hla_locus,
-                              hla_selection,
-                              hla_population,
-                              hla_sample_size_pattern,
-                              hla_sample_size,
-                              standard,
-                              hla_locus_type = "Classical") {
-
-    freq_url_root <- "http://www.allelefrequencies.net/hla6006a.asp?hla_locus_type=%s&hla_locus=%s&hla_selection=%s&hla_population=%s&hla_sample_size_pattern=%s&hla_sample_size=%s&standard=%s"
-
-    sprintf(freq_url_root, hla_locus_type,
-            convert_string(hla_locus),
-            convert_string(hla_selection),
-            convert_string(hla_population),
-            convert_string(hla_sample_size_pattern),
-            convert_string(hla_sample_size),
-            standard)
-}
+# store the list of valid alleles somewhere, becasue it takes too long to build it every time
 
 # get the list of valid alleles
 retrieve_AFND_valid_allele_list <- function(locus) {
-   #check_hla_locus(locus)
+    #check_hla_locus(locus)
     query_alleles_url <- sprintf("http://www.allelefrequencies.net/hla6006c.asp?hla_locus=%s&hla_locus_type=Classical", locus)
     
     html_input <- read_url(query_alleles_url)
@@ -38,8 +20,6 @@ retrieve_AFND_valid_allele_list <- function(locus) {
     valid_alleles <- rvest_tables[[3]]$X1
     valid_alleles
 }
-
-# store the list of valid alleles somewhere, becasue it takes too long to build it every time
 
 # Update the stored valid allele list 
 update_valid_alleles <- function () {
@@ -92,18 +72,40 @@ build_allele_group <- function(allele_selection) {
     # expand to alleles in the same p group
     p_group_name <- get_P_group(allele_selection)
     alleles_p_group <- get_p_group_members(p_group_name)
-
-     # find alleles corresponding to selection
+    
+    # find alleles corresponding to selection
     valid_p_alleles <- intersect(union(str_replace(p_group_name, "P", ""), alleles_p_group), 
-                                       valid_alleles)
+                                 valid_alleles)
     
     p_expand <- sapply(valid_p_alleles, function (X) {valid_alleles[
         # replace * by \\* to make the regexp work properly
         grepl(str_replace(X, "\\*", "\\\\*"), valid_alleles)]
-        })
+    })
     
     union(valid_p_alleles, union(unlist(p_expand), allele_selection))
 }
+
+# FUNCTIONS FOR ALLELE QUERY
+
+assemble_url_allele_freq <- function(hla_locus,
+                              hla_selection,
+                              hla_population,
+                              hla_sample_size_pattern,
+                              hla_sample_size,
+                              standard,
+                              hla_locus_type = "Classical") {
+
+    freq_url_root <- "http://www.allelefrequencies.net/hla6006a.asp?hla_locus_type=%s&hla_locus=%s&hla_selection=%s&hla_population=%s&hla_sample_size_pattern=%s&hla_sample_size=%s&standard=%s"
+
+    sprintf(freq_url_root, hla_locus_type,
+            convert_string(hla_locus),
+            convert_string(hla_selection),
+            convert_string(hla_population),
+            convert_string(hla_sample_size_pattern),
+            convert_string(hla_sample_size),
+            standard)
+}
+
 
 #' Query allele frequencies
 #'
@@ -129,9 +131,12 @@ query_allele_frequencies <- function(
     hla_locus = NA,
     hla_selection = NA,
     hla_population = NA,
+    hla_country = NA,
+    hla_region = NA,
+    hla_ethnic = NA,
     hla_sample_size_pattern = NA,
     hla_sample_size = NA,
-    standard="a") {
+    standard = "a") {
     
     # check whether input parameters are valid
     verify_parameters(hla_locus,
@@ -139,7 +144,8 @@ query_allele_frequencies <- function(
                       hla_population,
                       hla_sample_size_pattern,
                       hla_sample_size,
-                      standard = "a")
+                      standard = standard,
+                      query_type ="allele")
     
     # maximum 20 alleles can be in the url (last length(hla_selection) because the last chunk missing)
     breaks <- c(seq(from = 0, to = length(hla_selection), by =19),length(hla_selection))
@@ -148,14 +154,110 @@ query_allele_frequencies <- function(
     allele_df <- data.frame()
     for (i in seq(from = 1, to = length(breaks)-1)) {
     
-        queryurl <- assemble_url_freq(hla_locus,
+        queryurl <- assemble_url_allele_freq(hla_locus,
                                       hla_selection[(breaks[i]+1):(breaks[i+1])],
                                       hla_population,
                                       hla_sample_size_pattern,
                                       hla_sample_size,
                                       standard)
-        allele_df <- rbind(read_complete_allele_freq_table(queryurl), allele_df)
+        allele_df <- rbind(read_complete_freq_table(queryurl, type = "allele"), allele_df)
     }
+    allele_df
+}
+
+# FUNCTIONS FOR HAPLOTYPES
+
+assemble_haplotype_tring_url_from_allele_list <- function(allele_list) {
+    
+    # this is the order in which loci need to be passed
+    loci_regexp <- c("A\\*","B\\*","C\\*","DRB1\\*","DPA1\\*","DPB1\\*","DQA1\\*","DQB1\\*")
+    # be default set to not include locus
+    loci_names <- c("A_not", "B_not", "C_not", "DRB1_not", "DPA1_not", "DPB1_not", "DQA1_not", "DQB1_not")
+    for (i in seq(length(loci_regexp))) {
+        locus_name <- allele_list[grepl(loci_regexp[i], allele_list)]
+        if (length(locus_name) > 1) {
+            stop("In the list of haplotypes for the haplotype assembly, only one allele per locus may be passed. Following entry causes conflict: ", locus <- name)
+        } else if (length(locus_name) != 0) {
+            loci_names[i] <- locus_name
+        }
+    }
+    hla_str <- sprintf("hla_locus1=%s&hla_locus2=%s&hla_locus3=%s&hla_locus4=%s&hla_locus5=%s&hla_locus6=%s&hla_locus7=%s&hla_locus8=%s",
+                       loci_names[1], loci_names[2], loci_names[3], loci_names[4], loci_names[5], loci_names[6], loci_names[7], loci_names[8])
+    hla_str
+}
+    
+
+assemble_url_haplotype_freq <- function(hla_selection,
+                                     hla_population,
+                                     hla_country,
+                                     hla_region,
+                                     hla_ethnic,
+                                     hla_sample_size_pattern,
+                                     hla_sample_size) {
+    
+    hla_str <- assemble_haplotype_tring_url_from_allele_list(hla_selection)
+    freq_url_root <- str_c("http://www.allelefrequencies.net/hla6003a.asp?", 
+                           hla_str,
+                           "&hla_population=%s&hla_country=%s&hla_dataset=&hla_region=%s&hla_ethnic=%s&hla_study=&hla_order=order_1",
+                           "&hla_sample_size_pattern=%s&hla_sample_size=%s&hla_sample_year_pattern=equal&hla_sample_year=&hla_loci=")
+    
+    sprintf(freq_url_root, 
+            convert_string(hla_population),
+            convert_string(hla_country),
+            convert_string(hla_region),
+            convert_string(hla_ethnic),
+            convert_string(hla_sample_size_pattern),
+            convert_string(hla_sample_size))
+}
+
+
+#' Query haplotype frequencies
+#'
+#' @param hla_selection Allele that will be used for filtering data. e.g. A*01:01
+#' @param hla_population Numeric identifier of the population that will be used for filtering. Thie identifier is defined by the Allele Frequency Net Database.
+#' @param hla_sample_size_pattern Keyword used to define the filtering for a specific population size. e.g. "bigger_than", "equal", "less_than", "less_equal_than", "bigger_equal_than"
+#' @param hla_sample_size Integer number used to define the filtering for a specific population size, together with the hla_sample_size_pattern argument.
+#' @param standard Population standards, as defined in the package vignette. "g" - gold, "s" - silver, "a" - all
+#'
+#' @return data.frame object containing the result of the allele frequency query
+#' @export
+#'
+#' @examples library(AFNDquery)
+#'
+#' # select frequencies of the A*02:01 allele,
+#' # for gold standard population with more than 10,000 individuals
+#' sel <- query_allele_frequencies(hla_selection = "A*02:01",
+#' hla_sample_size_pattern = "bigger_than", hla_sample_size = 10000,
+#' standard="g")
+#'
+# only for one haplotype at a time
+query_haplotype_frequencies <- function(
+    # this selection is a selection of A,B,C.... alleles that will be assembled to haplotype
+    hla_selection = NA,
+    hla_population = NA,
+    hla_country = NA,
+    hla_region = NA,
+    hla_ethnic = NA,
+    hla_sample_size_pattern = NA,
+    hla_sample_size = NA) {
+    
+    # check whether input parameters are valid
+    verify_parameters(hla_locus = NA,
+                      hla_selection = hla_selection,
+                      hla_population = hla_population,
+                      hla_sample_size_pattern = hla_sample_size_pattern,
+                      hla_sample_size = hla_sample_size,
+                      query_type ="haplotype")
+ 
+    queryurl <- assemble_url_haplotype_freq(hla_selection,
+                                hla_population,
+                                hla_country,
+                                hla_region,
+                                hla_ethnic,
+                                hla_sample_size_pattern,
+                                hla_sample_size)
+    
+    allele_df <- read_complete_freq_table(queryurl, type = "haplotype")
     allele_df
 }
 
