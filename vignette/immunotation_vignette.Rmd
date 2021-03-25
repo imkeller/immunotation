@@ -206,6 +206,12 @@ sel1 <- query_allele_frequencies(hla_selection = "A*02:01",
 DT::datatable(sel1)
 ```
 
+```{r}
+sel1b <- query_allele_frequencies(hla_selection = "A*01:01", 
+                                hla_ethnic = "Asian")
+
+DT::datatable(sel1b)
+```
 
 ```{r}
 hla_selection <- build_allele_group("A*01:358")
@@ -220,7 +226,8 @@ sel1 <- query_allele_frequencies(hla_selection = hla_selection,
 
 ```{r}
 haplotype_alleles <- c("A*02:01", "B*", "C*")
-query_haplotype_frequencies(hla_selection = haplotype_alleles)
+query_haplotype_frequencies(hla_selection = haplotype_alleles,
+                            hla_region = "Europe")
 ```
 
 

@@ -1,34 +1,5 @@
-# read html file from the web
-# special function that will be formated according to BC recommendations
-# to handle web specific issues like reachability, response time...
-
-#' getURL
-#'
-#' @param URL   url that will be read
-#' @param N.TRIES   number, how often should the function try to read the html
-#'
-#' @return returns output of read_html(), a html character string.
-#' @import rvest
-
-getURL <- function(URL, N.TRIES=1L) {
-    N.TRIES <- as.integer(N.TRIES)
-    stopifnot(length(N.TRIES) == 1L, !is.na(N.TRIES))
-    while (N.TRIES > 0L) {
-        result <- tryCatch(xml2::read_html(URL), error=identity)
-        if (!inherits(result, "error"))
-            break
-        N.TRIES <- N.TRIES - 1L
-    }
-    if (N.TRIES == 0L) {
-        stop("'getURL()' failed:",
-             "\n  URL: ", URL,
-             "\n  error: ", conditionMessage(result))
-    }
-    result
-}
-
 read_url <- function(url) {
-    getURL(url)
+    getURL(url, read_method = "html")
 }
 
 # FUNCTIONS TO READ ALLELE FREQUENCY DATA
@@ -236,6 +207,56 @@ check_population <- function(hla_population) {
         }}
 }
 
+
+# get a list of valid countries, regions and ethnic origins
+get_valid_geographics <- function() {
+    url <- "http://www.allelefrequencies.net/hla6006a.asp?"
+    html_input <- read_url(url)
+    
+    rvest_tables <- html_table(html_input, fill = TRUE)
+    
+    # country
+    selection_str_1 <- rvest_tables[[3]]$X1[[5]]
+    split_selection_str_1 <- str_split(selection_str_1, "(\r\n\t\t\t\t\t)|(\r\n)")[[1]]
+    
+    valid_countries <- str_split(split_selection_str_1[[4]], pattern = regex("(?<=[a-z]|\\))(?=[A-Z])"))[[1]]
+    
+    # region, ethnic
+    selection_str_2 <- rvest_tables[[3]]$X1[[6]]
+    split_selection_str_2 <- str_split(selection_str_2, "(\r\n\t\t\t\t\t)|(\r\n)")[[1]]
+    
+    valid_regions <- str_split(split_selection_str_2[[2]], pattern = regex("(?<=[a-z])(?=[A-Z])"))[[1]]
+    valid_ethnic <- str_split(split_selection_str_2[[4]], pattern = regex("(?<=[a-z])(?=[A-Z])"))[[1]]
+    
+    list(valid_countries = valid_countries, 
+         valid_regions = valid_regions,
+         valid_ethnic = valid_ethnic)
+}
+
+valid_geographics <- get_valid_geographics()
+
+check_geographics <- function(country, region, ethnic) {
+    # do not test is its na
+    if (!is.na(country)) {
+        if(!(country %in% valid_geographics$valid_countries)) {
+            stop("Country not part of valid countries list: ", country, 
+                 ". Valid list of countries is: ", paste(valid_geographics$valid_countries, collapse = ", "))
+        }
+    }
+    if (!is.na(region)) {
+        if(!(region %in% valid_geographics$valid_regions)) {
+            stop("Region not part of valid regions list: ", region, 
+                 ". Valid list of regions is: ", paste(valid_geographics$valid_regions, collapse = ", "))
+        }
+    }
+    if (!is.na(ethnic)) {
+        if(!(ethnic %in% valid_geographics$valid_ethnic)) {
+            stop("Ethnic origin not part of valid regions list: ", ethnic, 
+                 ". Valid list of ethnics origin is: ", paste(valid_geographics$valid_ethnic, collapse = ", "))
+        }
+    }
+}
+
 check_sample_size <- function(hla_sample_size_pattern, hla_sample_size) {
     if (is.na(hla_sample_size_pattern) & is.na(hla_sample_size)) {TRUE} else {
         valid_pattern <- c("bigger_than",
@@ -265,6 +286,9 @@ verify_parameters <- function(hla_locus,
                               # for now we don't check the 
                               hla_selection,
                               hla_population,
+                              hla_country,
+                              hla_region,
+                              hla_ethnic,
                               hla_sample_size_pattern,
                               hla_sample_size,
                               standard = "a",
@@ -280,6 +304,7 @@ verify_parameters <- function(hla_locus,
         all(check_standard(standard),
             check_sample_size(hla_sample_size_pattern, hla_sample_size),
             check_population(hla_population),
+            check_geographics(hla_country, hla_region, hla_ethnic),
             check_hla_selection(hla_selection, query_type),
             check_hla_locus(hla_locus))
     }

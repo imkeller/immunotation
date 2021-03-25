@@ -90,17 +90,23 @@ build_allele_group <- function(allele_selection) {
 assemble_url_allele_freq <- function(hla_locus,
                               hla_selection,
                               hla_population,
+                              hla_country,
+                              hla_region,
+                              hla_ethnic,
                               hla_sample_size_pattern,
                               hla_sample_size,
                               standard,
                               hla_locus_type = "Classical") {
 
-    freq_url_root <- "http://www.allelefrequencies.net/hla6006a.asp?hla_locus_type=%s&hla_locus=%s&hla_selection=%s&hla_population=%s&hla_sample_size_pattern=%s&hla_sample_size=%s&standard=%s"
+    freq_url_root <- "http://www.allelefrequencies.net/hla6006a.asp?hla_locus_type=%s&hla_locus=%s&hla_selection=%s&hla_population=%s&hla_country=%s&hla_dataset=&hla_region=%s&hla_ethnic=%s&hla_study=&hla_order=order_1&hla_sample_size_pattern=%s&hla_sample_size=%s&standard=%s"
 
     sprintf(freq_url_root, hla_locus_type,
             convert_string(hla_locus),
             convert_string(hla_selection),
             convert_string(hla_population),
+            convert_string(hla_country),
+            convert_string(hla_region),
+            convert_string(hla_ethnic),
             convert_string(hla_sample_size_pattern),
             convert_string(hla_sample_size),
             standard)
@@ -111,7 +117,10 @@ assemble_url_allele_freq <- function(hla_locus,
 #'
 #' @param hla_locus HLA locus that will be used for filtering data. A, B, C, DPA1, DPB1, DQA1, DQB1, DRB1
 #' @param hla_selection Allele that will be used for filtering data. e.g. A*01:01
-#' @param hla_population Numeric identifier of the population that will be used for filtering. Thie identifier is defined by the Allele Frequency Net Database.
+#' @param hla_population Numeric identifier of the population that will be used for filtering. This identifier is defined by the Allele Frequency Net Database.
+#' @param hla_country Country of interest (e.g. Germany, France, ...).
+#' @param hla_region Geographic region of interest (e.g. Europe, North Africa, ...)
+#' @param hla_ethnic Ethnic origin of interest (e.g. Caucasoid, Siberian, ...)
 #' @param hla_sample_size_pattern Keyword used to define the filtering for a specific population size. e.g. "bigger_than", "equal", "less_than", "less_equal_than", "bigger_equal_than"
 #' @param hla_sample_size Integer number used to define the filtering for a specific population size, together with the hla_sample_size_pattern argument.
 #' @param standard Population standards, as defined in the package vignette. "g" - gold, "s" - silver, "a" - all
@@ -139,11 +148,14 @@ query_allele_frequencies <- function(
     standard = "a") {
     
     # check whether input parameters are valid
-    verify_parameters(hla_locus,
-                      hla_selection,
-                      hla_population,
-                      hla_sample_size_pattern,
-                      hla_sample_size,
+    verify_parameters(hla_locus = hla_locus,
+                      hla_selection = hla_selection,
+                      hla_population = hla_population,
+                      hla_country = hla_country,
+                      hla_region = hla_region,
+                      hla_ethnic = hla_ethnic,
+                      hla_sample_size_pattern = hla_sample_size_pattern,
+                      hla_sample_size = hla_sample_size,
                       standard = standard,
                       query_type ="allele")
     
@@ -157,6 +169,9 @@ query_allele_frequencies <- function(
         queryurl <- assemble_url_allele_freq(hla_locus,
                                       hla_selection[(breaks[i]+1):(breaks[i+1])],
                                       hla_population,
+                                      hla_country,
+                                      hla_region,
+                                      hla_ethnic,
                                       hla_sample_size_pattern,
                                       hla_sample_size,
                                       standard)
@@ -213,8 +228,12 @@ assemble_url_haplotype_freq <- function(hla_selection,
 
 #' Query haplotype frequencies
 #'
-#' @param hla_selection Allele that will be used for filtering data. e.g. A*01:01
+#' @param hla_selection Alleles that will be used to build the haplotype query. One entry per locus. If no entry for a given locus, the function will search for 
+#' haplotypes that do not include specifications for this locus. If any allele for a given locus should be considered, the list entry should be "A*" or other locus in same format.
 #' @param hla_population Numeric identifier of the population that will be used for filtering. Thie identifier is defined by the Allele Frequency Net Database.
+#' @param hla_country Country of interest (e.g. Germany, France, ...).
+#' @param hla_region Geographic region of interest (e.g. Europe, North Africa, ...)
+#' @param hla_ethnic Ethnic origin of interest (e.g. Caucasoid, Siberian, ...)
 #' @param hla_sample_size_pattern Keyword used to define the filtering for a specific population size. e.g. "bigger_than", "equal", "less_than", "less_equal_than", "bigger_equal_than"
 #' @param hla_sample_size Integer number used to define the filtering for a specific population size, together with the hla_sample_size_pattern argument.
 #' @param standard Population standards, as defined in the package vignette. "g" - gold, "s" - silver, "a" - all
@@ -245,6 +264,9 @@ query_haplotype_frequencies <- function(
     verify_parameters(hla_locus = NA,
                       hla_selection = hla_selection,
                       hla_population = hla_population,
+                      hla_country = hla_country,
+                      hla_region = hla_region,
+                      hla_ethnic = hla_ethnic,
                       hla_sample_size_pattern = hla_sample_size_pattern,
                       hla_sample_size = hla_sample_size,
                       query_type ="haplotype")
