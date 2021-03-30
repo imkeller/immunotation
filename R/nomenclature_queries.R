@@ -1,24 +1,6 @@
-# naming format
-# Genetic
-# 
-# HLA-A0101
-# HLA-A01:01 ok
-# HLA-A*01:01 ok
-# HLA-A*01:01:01 ok
-# HLA-A01 serotype 
-# HLA00001 HLA ID
-# protein group
-# 
-
-#Task 1: 
-# arcasHLA presumably mentions gene groups
-# convert to MHCpan input
-#A*01:01:01 -> A*01:01
-#A*03:01:01 -> A*03:01
-
 #' get_mhcpan_input
 #'
-#' @param name_list 
+#' @param allele_list 
 #'
 #' @return Protein chain list as formatted for MHCpan input
 #' @export
@@ -26,9 +8,9 @@
 #' @examples
 #' allele_list <- c("A*01:01:01","B*27:01")
 #' get_mhcpan_input(allele_list, mhc_class = "MHC-I")
-get_mhcpan_input <- function(name_list, mhc_class = c("MHC-I", "MHC-II")) {
+get_mhcpan_input <- function(allele_list, mhc_class) {
     # convert to locus*dd:dd format
-    protein_chain_names <- reformat_allele(name_list)
+    protein_chain_names <- reformat_allele(allele_list)
     
     # convert to MHCpan naming scheme
     if(mhc_class == "MHC-I") {
@@ -37,7 +19,7 @@ get_mhcpan_input <- function(name_list, mhc_class = c("MHC-I", "MHC-II")) {
         mhc_name_list <- sapply(protein_chain_names, convert_naming, add_hla = TRUE, add_star = FALSE)
         # check that they are allowed in the MHC input
         valid_in_reference <- sapply(mhc_name_list, function(x) x %in% netmhcI_input_template$netmhc_input)
-        if (!all(valid_in_reference)) {warning(paste(mhc_name_list[!valid_in_reference], "not in NetMHCpan input list.\n"))}
+        if (!all(valid_in_reference)) {stop(paste(mhc_name_list[!valid_in_reference], "not in NetMHCpan input list.\n"))}
         mhc_name_list <- mhc_name_list[valid_in_reference]
     } else if (mhc_class == "MHC-II") {
         # check which chains belong together
@@ -56,7 +38,7 @@ build_mhcII_complexes <- function(protein_chain_names) {
     valid_in_reference <- valid_in_reference | grepl("DRA", protein_chain_names)
     
     if(!all(valid_in_reference)) {
-        warning(paste(protein_chain_names[!valid_in_reference], "not in NetMHCIIpan input list.\n"))
+        stop(paste(protein_chain_names[!valid_in_reference], "not in NetMHCIIpan input list.\n"))
     }
 
     protein_chain_names_valid <- protein_chain_names[valid_in_reference]       
@@ -110,15 +92,29 @@ simplify_allele <- function(name_list, from_format = NA, to_format = NA) {
 
 reformat_allele <- function(allele_name) {
     simplified_allele <- str_extract(allele_name, pattern = "^[:alnum:]+\\*\\d+:\\d+")
-    if (is.na(simplified_allele)) {
-        # check if maybe HLA formating is used
+    if (any(is.na(simplified_allele))) {
+        # check if maybe HLA formatting is used
         simplified_allele <- str_extract(allele_name, pattern = "(?<=HLA-)[:alnum:]+\\*\\d+:\\d+")
-        if (is.na(simplified_allele)) { stop("Input allele does not have the right formating: ", allele_name) }
+        if (any(is.na(simplified_allele))) { stop("Input allele does not have the right formating: ", allele_name[is.na(simplified_allele)]) }
     }
     simplified_allele
 }
 
+allele_name_sanity_check <- function(allele_name) {
+    allele_name_old <- allele_name
+    hla_string <- grepl("HLA-", allele_name)
+    if (hla_string) {
+        # remove the HLA prefix
+        allele_name <- str_replace(allele_name, "HLA-", "")
+    }
+    # check if * : pattern contained
+    valid <- grepl("^.+\\*\\d+:\\d+", allele_name)
+    if (!valid) {stop("Input allele does not have the right formating: ", allele_name_old)}
+    allele_name 
+}
+
 derive_gene_group <- function(allele_name) {
+    allele_name <- allele_name_sanity_check(allele_name)
     locus_allele <- str_split(allele_name, pattern = "\\*")[[1]]
     locus <- locus_allele[[1]]
     allele <- locus_allele[[2]]
@@ -159,6 +155,7 @@ get_G_group <- function(allele_list) {
 }
 
 derive_protein_group <- function(allele_name) {
+    allele_name <- allele_name_sanity_check(allele_name)
     locus_allele <- str_split(allele_name, pattern = "\\*")[[1]]
     locus <- locus_allele[[1]]
     allele <- locus_allele[[2]]
@@ -191,6 +188,7 @@ derive_protein_group <- function(allele_name) {
 
 # get p group elements
 get_p_group_members <- function(p_group_name) {
+    p_group_name <- allele_name_sanity_check(p_group_name)
     locus_allele <- str_split(p_group_name, pattern = "\\*")[[1]]
     locus <- locus_allele[[1]]
     allele <- locus_allele[[2]]

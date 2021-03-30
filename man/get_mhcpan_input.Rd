@@ -4,10 +4,10 @@
 \alias{get_mhcpan_input}
 \title{get_mhcpan_input}
 \usage{
-get_mhcpan_input(name_list, mhc_class = c("MHC-I", "MHC-II"))
+get_mhcpan_input(allele_list, mhc_class = c("MHC-I", "MHC-II"))
 }
 \arguments{
-\item{name_list}{}
+\item{allele_list}{}
 }
 \value{
 Protein chain list as formatted for MHCpan input
