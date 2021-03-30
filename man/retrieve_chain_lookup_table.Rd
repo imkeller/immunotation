@@ -10,7 +10,8 @@ retrieve_chain_lookup_table(organism)
 \item{organism}{}
 }
 \value{
-
+Table containing MHC chain information for the organism. 
+It contains chain names, MHC restriction and protein sequence.
 }
 \description{
 retrieve_chain_lookup_table

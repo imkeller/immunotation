@@ -15,9 +15,16 @@ query_haplotype_frequencies(
 )
 }
 \arguments{
-\item{hla_selection}{Allele that will be used for filtering data. e.g. A*01:01}
+\item{hla_selection}{Alleles that will be used to build the haplotype query. One entry per locus. If no entry for a given locus, the function will search for 
+haplotypes that do not include specifications for this locus. If any allele for a given locus should be considered, the list entry should be "A*" or other locus in same format.}
 
 \item{hla_population}{Numeric identifier of the population that will be used for filtering. Thie identifier is defined by the Allele Frequency Net Database.}
+
+\item{hla_country}{Country of interest (e.g. Germany, France, ...).}
+
+\item{hla_region}{Geographic region of interest (e.g. Europe, North Africa, ...)}
+
+\item{hla_ethnic}{Ethnic origin of interest (e.g. Caucasoid, Siberian, ...)}
 
 \item{hla_sample_size_pattern}{Keyword used to define the filtering for a specific population size. e.g. "bigger_than", "equal", "less_than", "less_equal_than", "bigger_equal_than"}
 

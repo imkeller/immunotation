@@ -1,15 +1,28 @@
-# get a list of all valid organisms
-# Organism OBI:0100026
-#' organism_input
-#'
-#' @param organism 
-#'
-#' @return
+# These are the functions used to query information of the MRO
+# Helper function that are needed here are defined in MRO_interface_helper.R
+
+#
+#    Functions related to ORGANISM
+#
+
+#' get_valid_organisms
+#' @return a list of organisms that are part of the MRO annotation
 #' @export
 #'
 #' @examples
-#' organism_input("duck")
+#' get_valid_organisms()
 #' 
+get_valid_organisms <- function() {
+    # Organism OBI:0100026
+    organism_children <- mro.obo$children$`OBI:0100026`
+    mro.obo$name[organism_children]
+}
+
+# define a (package internal) variable 
+# get a list of all valid organisms 
+valid_organisms <- get_valid_organisms()
+
+# Sanity check for the user defined organism input
 organism_input <- function(organism) {
     # error when organism wrong
     stopifnot("Organism name invalid" = organism %in% valid_organisms)
@@ -17,107 +30,33 @@ organism_input <- function(organism) {
     names(valid_organisms)[organism == valid_organisms]
 }
 
+#
+#    Functions related to SINGLE CHAINS
+#
 
-# Format the allele list
-format_allele_input <- function(allele_list, input_format, organism) {
-    if(organism == "human" & input_format == "allele") {
-        # for human alleles, extract the first letters + 2 numbers
-        chain_level <- str_extract(allele_list, "\\w*\\*\\d*\\:\\d*")
-        # add HLA prefix and chain suffix, since needed for querying ontology
-        str_c("HLA-", chain_level, " chain")
-    }
-}
-
-
-
-find_MRO_ids <- function(MRO_allele_list) {
-    mro.obo$id[mro.obo$name %in% MRO_allele_list]
-}
-
-build_intersection <- function(MRO_ids_queried, type = c("has part", "gene product of")) {
-    type_id <- mro.obo$id[mro.obo$name == type]
-    str_c(type_id, " ", MRO_ids_queried)
-}
-
-retrieve_MHC_proteincomplex <- function(alleles = allele_list,
-                                        input_format = "allele",
-                                        organism = "human") {
-    # check if the organism name is valid
-    org_id <- organism_input(organism)
-    
-    # check if the allele list is correctly formatted, get the format needed in MRO
-    MRO_allele_list <- format_allele_input(alleles, input_format, organism)
-    
-    # find the ontology entries corresponding to allele list
-    MRO_ids_queried <- find_MRO_ids(MRO_allele_list)
-    
-    # Get the corresponding entries from the lookup table
-    lookup <- assemble_lookup(organism_id = org_id,
-                              level = "chain level")
-    
-    lookup_query <- lookup[lookup$chain_id %in% MRO_ids_queried, ]
-    
-    # for every locus, build all possible complexes that are fully covered
-    
-    
-    # find the protein complexes containing these chains
-    
-    # build the intersection of term that indicates part of
-    intersection_terms <- build_intersection(MRO_ids_queried)
-    
-    # this does not work properly
-    mro.obo$name[mro.obo$intersection_of %in% intersection_terms]  
-    
-    # find all complexes, where chain is present
-    sapply(intersection_terms, grep, x = mro.obo$intersection_of)
-    
-}
-
-
-#' retrieve_chain_lookup_table
-#'
-#' @param organism 
-#'
-#' @return
-#' @export
-#'
-#' @examples
-#' retrieve_chain_lookup_table("mouse")
-#' 
-retrieve_chain_lookup_table <- function(organism) {
-    # check if the organism name is valid
-    org_id <- organism_input(organism)
-    assemble_lookup(organism_id = org_id,
-                    level = "chain level")
-}
-
-
-find_intersection_ids <- function(intersection_list, int_list) {
-    hits <- sapply(intersection_list, grep, x = int_list)
-    if (length(hits[[1]]) == 0) {hits <- NA}
-    names(int_list)[hits]
-}
-
-find_children <- function(node_list) {
-    mro.obo$children[mro.obo$id %in% node_list]
-}
-
-#species_locus <- "MRO:0000111"
+# for a given locus (defined by species and mhc-i, mhc-ii....)
+# return all children that are proteins
+# --> return all protein chains encoded in this locus
 extract_mhc_type_table <- function(species_locus, protein_masked_intersections) {
+    # get all descendants
     all_species_loci <- get_descendants(mro.obo, species_locus)
+    # build a list of strings to find the gene products of the above descendants
     intersection_terms <- build_intersection(all_species_loci, type = "gene product of")
+    # intersect to find gene product descendants that are proteins
     masked_protein_chains <- find_intersection_ids(intersection_terms, int_list = protein_masked_intersections)
-    all_chains <- find_children(masked_protein_chains)
+    # get all children of the above defined categories
+    all_chains <- mro.obo$children[mro.obo$id %in% masked_protein_chains]
     # assumption that ids are always 11 characters long
     chains <- unlist(all_chains, use.names = FALSE)
+    # if there is a result result...
     if (!is.null(chains)) {
+        # we assume that the ids are always 11 long
         names(chains) <- substr(names(unlist(all_chains)),1,11)
     }
     return(chains)
 }
 
-assemble_lookup <- function(organism_id,
-                            level = "chain level") {
+assemble_chain_lookup_table <- function(organism_id) {
     # get all MHC loci present in this organism
     # MHC locus: MRO:0000004
     # MHC I, MHC II and non-classical MHC
@@ -135,20 +74,22 @@ assemble_lookup <- function(organism_id,
     ### here eliminate if empty loci exist
     species_loci <- species_loci[!sapply(species_loci, identical, y = character(0))]
     
-    # protein masked ontology 
+    # protein masked ontology (to make it possible to intersect later)
     # only entries classified as protein PR:0000001
     protein_masked_intersections <- mro.obo$intersection_of[grep("PR:000000001", mro.obo$intersection_of)]
+    protein_mask <- names(protein_masked_intersections)
     
+    # for all species_loci, get the table of chains
     tables <- sapply(species_loci, extract_mhc_type_table, 
                      protein_masked_intersections = protein_masked_intersections, simplify = FALSE)
     
+    # assemble the results into a dataframe
     unlisted_tables <- unlist(tables)
     names_chains <- names(unlisted_tables)
     chain_table <- data.frame(mhc_type_id = str_extract(names_chains, pattern = ".+(?=\\.)"),
                               locus_id = str_extract(names_chains, pattern = "(?<=\\.).+"),
                               chain_id = unlisted_tables)
     
-    protein_mask <- names(protein_masked_intersections)
     # filter out above categories such as HLA-DRB1 chain that is child of HLA-DRB chain
     chain_table_filtered <- chain_table[!chain_table$chain_id %in% protein_mask,]
     
@@ -156,7 +97,7 @@ assemble_lookup <- function(organism_id,
     mhc_type_names <-  mro.obo$name[mro.obo$id %in% unique(chain_table_filtered$mhc_type_id)]
     chain_table_filtered$mhc_type_names <- mhc_type_names[chain_table_filtered$mhc_type_id]
     
-    # get names of locus
+    # get names of loci
     locus_names <-  mro.obo$name[mro.obo$id %in% unique(chain_table_filtered$locus_id)]
     chain_table_filtered$locus_names <- locus_names[chain_table_filtered$locus_id]
     
@@ -166,20 +107,39 @@ assemble_lookup <- function(organism_id,
     names(chain_names_short) <- names(chain_names)
     chain_table_filtered$chain_names <- chain_names_short[chain_table_filtered$chain_id]
     
+    # get the chain sequence
+    chain_sequences <- extract_protein_sequence(chain_table_filtered$chain_id)
+    chain_table_filtered$chain_sequences <- chain_sequences
+    
     return(chain_table_filtered)
 }
 
-
-filter_molecules <- function(subcomplex) {
-    subcomplex[grep("complete molecule", mro.obo$property_value[subcomplex])]
+#' retrieve_chain_lookup_table
+#'
+#' @param organism 
+#'
+#' @return Table containing MHC chain information for the organism. 
+#' It contains chain names, MHC restriction and protein sequence.
+#' @export
+#'
+#' @examples
+#' retrieve_chain_lookup_table("mouse")
+#' 
+retrieve_chain_lookup_table <- function(organism) {
+    # check if the organism name is valid
+    org_id <- organism_input(organism)
+    
+    # assemble the chain table
+    assemble_chain_lookup_table(organism_id = org_id)
 }
 
-#complex_list <- complexes_locus_level[[1]]
-find_descendant_complexes <- function(complex_list) {
-    subcomplexes <- sapply(complex_list, function(X) get_descendants(roots = X, ontology = mro.obo, exclude_roots = TRUE))
-    sapply(subcomplexes, filter_molecules )
-}
+#
+#    Functions related to PROTEIN COMPLEX
+#
 
+# build the table containing mhc_type, complex name, alpha, beta name etc...
+# this is done individually for every mhc_type
+# complex_sublist_list is a list containing the list of complexes for evey mhc type (list of lists)
 extract_mhc_complex_table <- function(complex_sublist_list, mhc_type) {
     # Need to access the name of the list entry
     complex_type <- names(complex_sublist_list)
@@ -228,10 +188,10 @@ extract_mhc_complex_table <- function(complex_sublist_list, mhc_type) {
 
 
 #' assemble_protein_complex
+#' 
+#' @param organism_id  Organism for which the lookup should be built (e.g. "human", "mouse", ...)
 #'
-#' @param organism_id 
-#'
-#' @return
+#' @return a data frame with the MHC complexes annotated in MRO (only completely annotated complexes are returned)
 #' @export
 #'
 #' @examples
@@ -244,6 +204,7 @@ assemble_protein_complex <- function(organism_id) {
     # nonclassical MHC protein complex MRO:0001464
     # get all protein complexes belonging to these entries and overlapping with taxon queried
     complexes_mhc_level <- mro.obo$children[mro.obo$id %in% c("MRO:0001355", "MRO:0001356", "MRO:0001464")]
+    
     # filter for taxon of interest
     entries_for_species <- mro.obo$id[grep(organism_id, mro.obo$intersection_of)]
     species_complexes_mhc_level <- sapply(complexes_mhc_level, intersect, y = entries_for_species, simplify = FALSE)
@@ -253,9 +214,11 @@ assemble_protein_complex <- function(organism_id) {
     # find the children with entries partial/complete molecule
     ## for every complex locus level find all partial and complete descendant complexes
     complex_list <- sapply(complexes_locus_level, find_descendant_complexes)
-    #
-    #eliminate those that are character(0)
-    complete_table <- data.frame(mhc_type = 0, complex_type = 0, complex_name = 0, complex_status = 0, alpha_name = 0,  beta_name = 0, complex_serotype=0, serotype_name=0)
+    
+    # create an empty dataframe for assembling info to come
+    complete_table <- data.frame(mhc_type = character(0), complex_type = character(0), complex_name = character(0), 
+                                 complex_status = character(0), alpha_name = character(0),  beta_name = character(0), 
+                                 complex_serotype= character(0), serotype_name= character(0))
     # loop over mhc class
     for (mhc_type in names(complex_list)) {
         complex_sublist <- complex_list[[mhc_type]]
@@ -270,6 +233,55 @@ assemble_protein_complex <- function(organism_id) {
     
     return(complete_table)
 }
-#Final table should contain: MHC type, locus, protein complex, chains
 
+
+
+# The protein complex table for humans can be assembled before, because it takes quite some time
+# get the protein lookup table
+#' human_protein_complex_table
+#' @details   \code{human_protein_complex_table}: human_protein_complex_table.
+#' @export
+human_protein_complex_table <- assemble_protein_complex(organism_id = organism_input("human"))
+
+# Serotypes
+#' get_serotypes
+#' Get the serotypes of the MHC complexes encoded by a list of MHC alleles.
+#'
+#' @param allele_list List of allele
+#' @param organism  Organism to be used for MRO lookup. 
+#' If the organism does not match the given allele, a empty object is returned.
+#' @param mhc_type  ["MHC-I" or "MHC-II"] MHC class to use for MRO lookup.
+#'
+#' @return Named list of serotypes, which only contains complexes contained in the MRO. 
+#' If no serotype is annoted for a given complex, the list element is NA.
+#' @export
+#'
+#' @examples
+#' allele_list <- c("A*01:01:01","B*27:01")
+#' get_serotypes(allele_list, mhc_type = "MHC-I")
+#' 
+get_serotypes <- function(allele_list, organism = "human", mhc_type) {
+    chain_list <- sapply(allele_list, reformat_allele)
+    
+    # get the protein lookup table
+    if (organism == "human") {
+        protein_complexes <- human_protein_complex_table
+    } else {
+        orgid <- organism_input(organism)
+        protein_complexes <- assemble_protein_complex(organism_id = orgid)
+    }
+    
+    # filter the matches to alpha name
+    full_chain_list <- sapply(chain_list, function(X) paste0("HLA-", X, " chain"))
+    if (mhc_type == "MHC-I") {
+        filtered_complexes <- protein_complexes[protein_complexes$alpha_name %in% full_chain_list, ]
+    } else if (mhc_type == "MHC-II") {
+        filtered_complexes <- protein_complexes[protein_complexes$alpha_name %in% full_chain_list & 
+                                                    protein_complexes$beta_name %in% full_chain_list, ]
+    } else {stop("mhc_type needs to be MHC-I or MHC-II")}
+    
+    named_serotype_list <- filtered_complexes$serotype_name
+    names(named_serotype_list) <- filtered_complexes$complex_name
+    named_serotype_list 
+}
 

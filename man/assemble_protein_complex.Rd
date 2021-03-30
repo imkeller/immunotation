@@ -7,10 +7,10 @@
 assemble_protein_complex(organism_id)
 }
 \arguments{
-\item{organism_id}{}
+\item{organism_id}{Organism for which the lookup should be built (e.g. "human", "mouse", ...)}
 }
 \value{
-
+a data frame with the MHC complexes annotated in MRO (only completely annotated complexes are returned)
 }
 \description{
 assemble_protein_complex

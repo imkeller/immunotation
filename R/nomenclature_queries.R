@@ -110,6 +110,11 @@ simplify_allele <- function(name_list, from_format = NA, to_format = NA) {
 
 reformat_allele <- function(allele_name) {
     simplified_allele <- str_extract(allele_name, pattern = "^[:alnum:]+\\*\\d+:\\d+")
+    if (is.na(simplified_allele)) {
+        # check if maybe HLA formating is used
+        simplified_allele <- str_extract(allele_name, pattern = "(?<=HLA-)[:alnum:]+\\*\\d+:\\d+")
+        if (is.na(simplified_allele)) { stop("Input allele does not have the right formating: ", allele_name) }
+    }
     simplified_allele
 }
 
@@ -211,52 +216,3 @@ get_p_group_members <- function(p_group_name) {
 get_P_group <- function(allele_list) {
     sapply(allele_list, derive_protein_group)
 }
-
-
-# The protein complex table for humans can be assembled before, because it takes quite some time
-# get the protein lookup table
-#' mro.obo
-#' @details   \code{human_protein_complex_table}: human_protein_complex_table.
-#' @import ontologyIndex
-#' @export
-human_protein_complex_table <- assemble_protein_complex(organism_id = organism_input("human"))
-
-# Serotypes
-#' get_serotypes
-#'
-#' @param allele_list 
-#'
-#' @return serotype
-#' @export
-#'
-#' @examples
-#' allele_list <- c("A*01:01:01","B*27:01")
-#' get_serotypes(allele_list, mhc_type = "MHC-I")
-#' 
-get_serotypes <- function(allele_list, organism = "human", mhc_type = c("MHC-I", "MHC-II")) {
-    chain_list <- sapply(allele_list, reformat_allele)
-    
-    # get the protein lookup table
-    if (organism == "human") {
-        protein_complexes <- human_protein_complex_table
-    } else {
-        orgid <- organism_input(organism)
-        protein_complexes <- assemble_protein_complex(organism_id = orgid)
-    }
-
-    # filter the matches to alpha name
-    full_chain_list <- sapply(chain_list, function(X) paste0("HLA-", X, " chain"))
-    if (mhc_type == "MHC-I") {
-        filtered_complexes <- protein_complexes[protein_complexes$alpha_name %in% full_chain_list, ]
-    } else if (mhc_type == "MHC-II") {
-        filtered_complexes <- protein_complexes[protein_complexes$alpha_name %in% full_chain_list & 
-                                                    protein_complexes$beta_name %in% full_chain_list, ]
-    } else {stop("mhc_type needs to be MHC-I or MHC-II")}
-    
-    named_serotype_list <- filtered_complexes$serotype_name
-    names(named_serotype_list) <- filtered_complexes$complex_name
-    named_serotype_list 
-}
-
-# MHC II
-#protein_complexes[grep("HLA-DRB", protein_complexes$beta_name),]

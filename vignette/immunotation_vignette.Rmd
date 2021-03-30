@@ -127,6 +127,13 @@ sum_table <- df %>%
 DT::datatable(sum_table)
 ```
 
+The list of annotated human protein complexes is:
+
+```{r}
+human_protein_complex_table
+```
+
+
 The `get_serotype` function can be used to query the serotype of encoded protein complexes for a given HLA genotype. The allele lists represent the MHC class I and MHC class II genotype of an exemplary donor.
 
 ```{r}
