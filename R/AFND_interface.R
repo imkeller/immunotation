@@ -180,7 +180,7 @@ check_hla_selection <- function(hla_selection, query_type) {
             pattern_match <- grepl("^(\\w*|\\w*\\d)\\*\\d\\d", hla_selection)
         } else if (query_type == "haplotype") {
             # for haplotype A* level is ok to query any HLA-A allele
-            pattern_match <- grepl("^(\\w*|\\w*\\d)", hla_selection)  
+            pattern_match <- grepl("^(\\w*|\\w*\\d)\\*", hla_selection)  
         } else {stop("query_type must be allele or haplotype")}
         
         if (all(pattern_match)) {
@@ -292,7 +292,7 @@ verify_parameters <- function(hla_locus,
                               hla_sample_size_pattern,
                               hla_sample_size,
                               standard = "a",
-                              query_type = c("allele", "haplotype")) {
+                              query_type) {
     
     # do the checks only if variables are not na
     if (all(is.na(c(hla_locus, hla_selection, hla_population,
