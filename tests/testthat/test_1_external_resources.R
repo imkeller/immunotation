@@ -36,7 +36,7 @@ test_that("netmhcI_input_template has adequate entries", {
 test_that("all_netmhcII_template has adequate entries", {
     # check that there are entries for every expected locus
     patterns_loci <- c("DRB1*", "DRB3*", "DRB4*", "DRB5*", "DPA1*", "DPB1*", "DQA1*", "DQB1*")
-    observed_loci <- unique(str_extract(all_netmhcII_template, "^\\w+\\*"))
+    observed_loci <- unique(stringr::str_extract(all_netmhcII_template, "^\\w+\\*"))
     common_loci <- intersect(patterns_loci, observed_loci)
     expect_equal(length(common_loci), 8)
     

@@ -79,7 +79,7 @@ test_that("build_allele_group() returns expected results", {
     
 context("Querying haplotype frequency")
 
-test_that("build_allele_group() return error when arguments not adequate", {
+test_that("query_haplotype_frequencies() return error when arguments not adequate", {
     expect_error(query_haplotype_frequencies())
     expect_error(query_haplotype_frequencies(hla_selection = NA, hla_population = NA, hla_country = NA,
                                     hla_region = NA, hla_ethnic = NA, hla_sample_size_pattern = NA,
@@ -116,7 +116,7 @@ test_that("build_allele_group() return error when arguments not adequate", {
                                              hla_sample_size = "foo"))
 })
 
-test_that("build_allele_group() returns expected results", {
+test_that("query_haplotype_frequencies() returns expected results", {
     df <- query_haplotype_frequencies(hla_selection = c("A*02:01", "B*", "C*"),
                                 hla_region = "Europe")
     expect_equal(ncol(df), 5)

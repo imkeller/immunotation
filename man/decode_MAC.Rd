@@ -2,18 +2,18 @@
 % Please edit documentation in R/MACUI_interface.R
 \name{decode_MAC}
 \alias{decode_MAC}
-\title{decode_MAC}
+\title{Decode MAC}
 \usage{
 decode_MAC(MAC)
 }
 \arguments{
-\item{MAC}{}
+\item{MAC}{multiple allele code (e.g. "A*01:ATJNV")}
 }
 \value{
 decoded MAC
 }
 \description{
-decode_MAC
+Decode a multiple allele code (MAC) into a list of HLA alleles.
 }
 \examples{
 MAC <- "A*01:ATJNV"

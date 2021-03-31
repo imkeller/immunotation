@@ -16,6 +16,5 @@ data.frame object containing the result of the population detail query
 Query population metainformation
 }
 \examples{
-library(AFNDquery)
 population_detail <- query_population_detail(0001986)
 }

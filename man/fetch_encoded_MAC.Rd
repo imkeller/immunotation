@@ -7,7 +7,7 @@
 fetch_encoded_MAC(handle)
 }
 \arguments{
-\item{handle}{}
+\item{handle}{curl handle}
 }
 \value{
 curl handle fetch

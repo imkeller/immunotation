@@ -29,8 +29,6 @@ haplotypes that do not include specifications for this locus. If any allele for 
 \item{hla_sample_size_pattern}{Keyword used to define the filtering for a specific population size. e.g. "bigger_than", "equal", "less_than", "less_equal_than", "bigger_equal_than"}
 
 \item{hla_sample_size}{Integer number used to define the filtering for a specific population size, together with the hla_sample_size_pattern argument.}
-
-\item{standard}{Population standards, as defined in the package vignette. "g" - gold, "s" - silver, "a" - all}
 }
 \value{
 data.frame object containing the result of the allele frequency query
@@ -39,12 +37,7 @@ data.frame object containing the result of the allele frequency query
 Query haplotype frequencies
 }
 \examples{
-library(AFNDquery)
-
-# select frequencies of the A*02:01 allele,
-# for gold standard population with more than 10,000 individuals
-sel <- query_allele_frequencies(hla_selection = "A*02:01",
-hla_sample_size_pattern = "bigger_than", hla_sample_size = 10000,
-standard="g")
+# works only for one haplotype at a time
+query_haplotype_frequencies(hla_selection = c("A*02:01", "B*", "C*"), hla_region = "Europe")
 
 }

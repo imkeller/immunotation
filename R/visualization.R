@@ -1,35 +1,37 @@
 
 assemble_frequency_lat_long_df <- function(global_alleles) {
-
-    global_alleles <- global_alleles %>%
-        dplyr::mutate(sample_size = as.integer(str_remove_all(sample_size, pattern = ","))) %>%
-        dplyr::mutate(allele_frequency = as.double(allele_frequency)) %>%
-        dplyr::filter(allele_frequency != 0.000) %>%
-        tidyr::drop_na() %>%
-        tidyr::as_tibble()
+    
+    global_alleles$sample_size <- as.integer(stringr::str_remove_all(global_alleles$sample_size, pattern = ","))
+    global_alleles$allele_frequency <- as.double(global_alleles$allele_frequency)
+    
+    global_alleles <- global_alleles[global_alleles$allele_frequency != 0.000,]
+    global_alleles <- tidyr::drop_na(global_alleles)
     
     population_details <- query_population_detail(unique(as.numeric(global_alleles$population_id)))
     
-    pop_long_lat <- population_details %>%
-        tidyr::separate(Latitude, into = c("lata", "mina", "dira")) %>%
-        tidyr::separate(Longitude, into = c("longo", "mino", "diro")) %>%
-        dplyr::mutate(lat = ifelse(dira == "N", 
-                                   as.numeric(lata) + as.numeric(mina)/60,
-                                   -as.numeric(lata) - as.numeric(mina)/60)) %>%
-        dplyr::mutate(long = ifelse(diro == "E", 
-                                    as.numeric(longo) + as.numeric(mino)/60,
-                                    -as.numeric(longo) - as.numeric(mino)/60))
+    population_details <- tidyr::separate(population_details, Latitude, into = c("lata", "mina", "dira"))
+    population_details$lat <- ifelse(population_details$dira == "N", 
+                                     as.numeric(population_details$lata) + as.numeric(population_details$mina)/60,
+                                    -as.numeric(population_details$lata) - as.numeric(population_details$mina)/60)
     
-    df_lat_long <- merge(global_alleles, pop_long_lat, by = "population_id")
+    population_details <- tidyr::separate(population_details, Longitude, into = c("longo", "mino", "diro"))
+    population_details$long <- ifelse(population_details$diro == "E", 
+                                     as.numeric(population_details$longo) + as.numeric(population_details$mino)/60,
+                                     -as.numeric(population_details$longo) - as.numeric(population_details$mino)/60)
+    
+    df_lat_long <- merge(global_alleles, population_details, by = "population_id")
     df_lat_long
 }
 
-#' plot_allele_frequency
+#' @title Plotting allele frequencies
+#' @description \code{plot_allele_frequency} Generate a World map displaying the frequency of a given table of HLA alleles. Use the function
+#' \link{query_allele_frequencies} to generate a table with allele frequencies.
 #'
-#' @param allele_frequency returned by query_allele_freqeuncies()
+#' @param allele_frequency returned by \link{query_allele_frequencies}
 #'
 #' @return ggplot2 object displaying the allele frequencies on a world map.
 #' @export
+#' @import maps
 #'
 #' @examples
 #' 
@@ -44,7 +46,7 @@ plot_allele_frequency <- function(allele_frequency) {
     
     df_lat_long <- assemble_frequency_lat_long_df(allele_frequency)
     
-    WorldData <- ggplot2::map_data("world") %>% dplyr::filter(region != "Antarctica")
+    WorldData <- ggplot2::map_data("world")[ggplot2::map_data("world")$region != "Antarctica",]
     
     ggplot2::ggplot() +
         ggplot2::geom_map(data = WorldData, map = WorldData,

@@ -2,8 +2,7 @@
 % Please edit documentation in R/MRO_interface.R
 \name{get_serotypes}
 \alias{get_serotypes}
-\title{get_serotypes
-Get the serotypes of the MHC complexes encoded by a list of MHC alleles.}
+\title{Serotypes}
 \usage{
 get_serotypes(allele_list, organism = "human", mhc_type)
 }
@@ -20,7 +19,6 @@ Named list of serotypes, which only contains complexes contained in the MRO.
 If no serotype is annoted for a given complex, the list element is NA.
 }
 \description{
-get_serotypes
 Get the serotypes of the MHC complexes encoded by a list of MHC alleles.
 }
 \examples{

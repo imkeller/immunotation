@@ -7,10 +7,10 @@
 get_valid_organisms()
 }
 \value{
-a list of organisms that are part of the MRO annotation
+list of organisms
 }
 \description{
-get_valid_organisms
+get the list of organisms that are part of the MRO annotation
 }
 \examples{
 get_valid_organisms()

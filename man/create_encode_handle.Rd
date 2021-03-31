@@ -7,7 +7,7 @@
 create_encode_handle(allele_names)
 }
 \arguments{
-\item{allele_names}{}
+\item{allele_names}{list of HLA alleles}
 }
 \value{
 curl handle

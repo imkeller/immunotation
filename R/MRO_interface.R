@@ -5,8 +5,9 @@
 #    Functions related to ORGANISM
 #
 
-#' get_valid_organisms
-#' @return a list of organisms that are part of the MRO annotation
+#' @title get_valid_organisms
+#' @description get the list of organisms that are part of the MRO annotation
+#' @return list of organisms
 #' @export
 #'
 #' @examples
@@ -39,7 +40,7 @@ organism_input <- function(organism) {
 # --> return all protein chains encoded in this locus
 extract_mhc_type_table <- function(species_locus, protein_masked_intersections) {
     # get all descendants
-    all_species_loci <- get_descendants(mro.obo, species_locus)
+    all_species_loci <- ontologyIndex::get_descendants(mro.obo, species_locus)
     # build a list of strings to find the gene products of the above descendants
     intersection_terms <- build_intersection(all_species_loci, type = "gene product of")
     # intersect to find gene product descendants that are proteins
@@ -86,8 +87,8 @@ assemble_chain_lookup_table <- function(organism_id) {
     # assemble the results into a dataframe
     unlisted_tables <- unlist(tables)
     names_chains <- names(unlisted_tables)
-    chain_table <- data.frame(mhc_type_id = str_extract(names_chains, pattern = ".+(?=\\.)"),
-                              locus_id = str_extract(names_chains, pattern = "(?<=\\.).+"),
+    chain_table <- data.frame(mhc_type_id = stringr::str_extract(names_chains, pattern = ".+(?=\\.)"),
+                              locus_id = stringr::str_extract(names_chains, pattern = "(?<=\\.).+"),
                               chain_id = unlisted_tables)
     
     # filter out above categories such as HLA-DRB1 chain that is child of HLA-DRB chain
@@ -103,7 +104,7 @@ assemble_chain_lookup_table <- function(organism_id) {
     
     # get the names of chains
     chain_names <- mro.obo$name[mro.obo$id %in% chain_table_filtered$chain_id]
-    chain_names_short <-  str_extract(chain_names, pattern = ".*(?= chain)")
+    chain_names_short <-  stringr::str_extract(chain_names, pattern = ".*(?= chain)")
     names(chain_names_short) <- names(chain_names)
     chain_table_filtered$chain_names <- chain_names_short[chain_table_filtered$chain_id]
     
@@ -114,9 +115,9 @@ assemble_chain_lookup_table <- function(organism_id) {
     return(chain_table_filtered)
 }
 
-#' retrieve_chain_lookup_table
+#' @title Retrieve MHC chain lookup table
 #'
-#' @param organism 
+#' @param organism name of organism (e.g. "human")
 #'
 #' @return Table containing MHC chain information for the organism. 
 #' It contains chain names, MHC restriction and protein sequence.
@@ -126,11 +127,9 @@ assemble_chain_lookup_table <- function(organism_id) {
 #' retrieve_chain_lookup_table("mouse")
 #' 
 retrieve_chain_lookup_table <- function(organism) {
-    # check if the organism name is valid
-    org_id <- organism_input(organism)
     
     # assemble the chain table
-    assemble_chain_lookup_table(organism_id = org_id)
+    assemble_chain_lookup_table(organism_id = "mouse")
 }
 
 #
@@ -187,9 +186,11 @@ extract_mhc_complex_table <- function(complex_sublist_list, mhc_type) {
 
 
 
-#' assemble_protein_complex
+#' @title Assemble protein complex
+#' @description Assemble a table or MHC protein complexes for a given organism.
 #' 
-#' @param organism_id  Organism for which the lookup should be built (e.g. "human", "mouse", ...)
+#' @param organism_id  Organism for which the lookup should be built (e.g. "human", "mouse", ...). The list of valid 
+#' organisms can be found using the function \code{get_valid_organisms}
 #'
 #' @return a data frame with the MHC complexes annotated in MRO (only completely annotated complexes are returned)
 #' @export
@@ -243,9 +244,9 @@ assemble_protein_complex <- function(organism_id) {
 #' @export
 human_protein_complex_table <- assemble_protein_complex(organism_id = organism_input("human"))
 
-# Serotypes
-#' get_serotypes
-#' Get the serotypes of the MHC complexes encoded by a list of MHC alleles.
+
+#' @title Serotypes
+#' @description Get the serotypes of the MHC complexes encoded by a list of MHC alleles.
 #'
 #' @param allele_list List of allele
 #' @param organism  Organism to be used for MRO lookup. 

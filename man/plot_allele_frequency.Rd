@@ -2,18 +2,19 @@
 % Please edit documentation in R/visualization.R
 \name{plot_allele_frequency}
 \alias{plot_allele_frequency}
-\title{plot_allele_frequency}
+\title{Plotting allele frequencies}
 \usage{
 plot_allele_frequency(allele_frequency)
 }
 \arguments{
-\item{allele_frequency}{}
+\item{allele_frequency}{returned by \link{query_allele_frequencies}}
 }
 \value{
-ggplot
+ggplot2 object displaying the allele frequencies on a world map.
 }
 \description{
-plot_allele_frequency
+\code{plot_allele_frequency} Generate a World map displaying the frequency of a given table of HLA alleles. Use the function
+\link{query_allele_frequencies} to generate a table with allele frequencies.
 }
 \examples{
 

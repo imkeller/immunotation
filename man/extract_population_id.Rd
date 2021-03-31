@@ -7,11 +7,11 @@
 extract_population_id(data)
 }
 \arguments{
-\item{data}{html character string to parse population ids from}
+\item{data}{html from AFND website}
 }
 \value{
-list of population ids present in data
+population ids
 }
 \description{
-extract_population_id
+extract the population ids from the html result
 }

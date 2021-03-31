@@ -42,7 +42,6 @@ data.frame object containing the result of the allele frequency query
 Query allele frequencies
 }
 \examples{
-library(AFNDquery)
 
 # select frequencies of the A*02:01 allele,
 # for gold standard population with more than 10,000 individuals

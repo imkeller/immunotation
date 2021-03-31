@@ -2,18 +2,18 @@
 % Please edit documentation in R/MACUI_interface.R
 \name{encode_MAC}
 \alias{encode_MAC}
-\title{encode_MAC}
+\title{Encode MAC}
 \usage{
 encode_MAC(allele_list)
 }
 \arguments{
-\item{allele_list}{}
+\item{allele_list}{list of HLA alleles (e.g. c("A*01:01:01", "A*02:01:01", "A*03:01"))}
 }
 \value{
 encoded MAC
 }
 \description{
-encode_MAC
+Encode a list of HLA alleles into multiple allele code (MAC).
 }
 \examples{
 allele_list <- c("A*01:01:01", "A*02:01:01", "A*03:01")

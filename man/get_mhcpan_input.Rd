@@ -2,12 +2,14 @@
 % Please edit documentation in R/nomenclature_queries.R
 \name{get_mhcpan_input}
 \alias{get_mhcpan_input}
-\title{get_mhcpan_input}
+\title{Get format for NetMHCpan tools}
 \usage{
-get_mhcpan_input(allele_list, mhc_class = c("MHC-I", "MHC-II"))
+get_mhcpan_input(allele_list, mhc_class)
 }
 \arguments{
-\item{allele_list}{}
+\item{allele_list}{list of HLA alles (e.g. c("A*01:01:01","B*27:01"))}
+
+\item{mhc_class}{["MHC-I"|"MHC-II"]}
 }
 \value{
 Protein chain list as formatted for MHCpan input

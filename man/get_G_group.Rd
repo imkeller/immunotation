@@ -13,7 +13,7 @@ get_G_group(allele_list)
 Named list of G-groups the input alleles belong to.
 }
 \description{
-get_G_group
+get the G groups for a list of HLA alleles
 }
 \examples{
 allele_list <- c("DQB1*02:02:01", "DQB1*06:09:01")

@@ -3,7 +3,7 @@
 \docType{data}
 \name{mro.obo}
 \alias{mro.obo}
-\title{mro.obo}
+\title{MRO}
 \format{
 An object of class \code{ontology_index} of length 18.
 }
@@ -11,9 +11,6 @@ An object of class \code{ontology_index} of length 18.
 mro.obo
 }
 \description{
-mro.obo
-}
-\details{
 \code{mro.obo}: MHC Restriction Ontology obo file.
 }
 \keyword{datasets}

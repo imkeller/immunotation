@@ -2,18 +2,19 @@
 % Please edit documentation in R/MRO_interface.R
 \name{assemble_protein_complex}
 \alias{assemble_protein_complex}
-\title{assemble_protein_complex}
+\title{Assemble protein complex}
 \usage{
 assemble_protein_complex(organism_id)
 }
 \arguments{
-\item{organism_id}{Organism for which the lookup should be built (e.g. "human", "mouse", ...)}
+\item{organism_id}{Organism for which the lookup should be built (e.g. "human", "mouse", ...). The list of valid 
+organisms can be found using the function \code{get_valid_organisms}}
 }
 \value{
 a data frame with the MHC complexes annotated in MRO (only completely annotated complexes are returned)
 }
 \description{
-assemble_protein_complex
+Assemble a table or MHC protein complexes for a given organism.
 }
 \examples{
 org_id <- organism_input("mouse")

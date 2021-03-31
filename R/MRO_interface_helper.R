@@ -7,7 +7,7 @@ build_intersection <- function(MRO_ids_queried, type = c("has part", "gene produ
     # find all entries that are "type"
     type_id <- mro.obo$id[mro.obo$name == type]
     # return as string which will be needed for lookup
-    str_c(type_id, " ", MRO_ids_queried)
+    stringr::str_c(type_id, " ", MRO_ids_queried)
 }
 
 # build an intersection of two entry lists
@@ -26,7 +26,7 @@ extract_protein_sequence <- function(chain_list) {
                # for some chains no seq is given, this is why we have to test if character(0)
                if(length(annot) > 0) {
                    prop_value <- annot[[3]]
-                   return(str_extract(prop_value, "(?<=\\\")[A-Z]*(?=\\\")"))
+                   return(stringr::str_extract(prop_value, "(?<=\\\")[A-Z]*(?=\\\")"))
                } else {return("")}
 
            }
@@ -65,7 +65,7 @@ get_complex_chains <- function(id) {
     prop_value <- ontologyIndex::get_term_property(mro.obo, property_name = "intersection_of", id, as_names = FALSE)
     # location of MRO:0001984
     loc_comp <- grep("BFO:0000051", prop_value)
-    chains <- str_extract(prop_value[loc_comp], pattern = "(?<=\\s)(.*)")
+    chains <- stringr::str_extract(prop_value[loc_comp], pattern = "(?<=\\s)(.*)")
     chains
 }
 
@@ -73,7 +73,7 @@ get_complex_chains <- function(id) {
 get_complex_serotype <- function(id) {
     prop_value <- ontologyIndex::get_term_property(mro.obo, property_name = "intersection_of", id, as_names = FALSE)
     loc_serotype <- grep("MRO:0000001", prop_value)
-    serotype <- str_extract(prop_value[loc_serotype], pattern = "(?<=\\s)(.*)")
+    serotype <- stringr::str_extract(prop_value[loc_serotype], pattern = "(?<=\\s)(.*)")
     if(length(serotype) == 0) {serotype <- NA}
     serotype
 }

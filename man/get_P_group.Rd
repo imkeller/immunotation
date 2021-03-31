@@ -7,13 +7,13 @@
 get_P_group(allele_list)
 }
 \arguments{
-\item{allele_list}{}
+\item{allele_list}{list of HLA alleles}
 }
 \value{
 Named list of P-groups the input alleles belong to.
 }
 \description{
-get_P_group
+get the P groups for a list of HLA alleles
 }
 \examples{
 allele_list <- c("DQB1*02:02:01", "DQB1*06:09:01")

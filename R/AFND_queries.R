@@ -7,7 +7,7 @@ convert_string <- function(value) {
     else value
 }
 
-# store the list of valid alleles somewhere, becasue it takes too long to build it every time
+# store the list of valid alleles somewhere, because it takes too long to build it every time
 
 # get the list of valid alleles
 retrieve_AFND_valid_allele_list <- function(locus) {
@@ -56,14 +56,16 @@ get_valid_allele_list <- function() {
 
 # convert a allele into all possible alleles contained in this allele
 # e.g. A*01:01 -> A*01:01:01, A*01:01:02, A*01:01:03
-#' build_allele_group
+#' @title  Building a list of alleles to cover 
+#' @description \code{build_allele_group} e.g. A*01:01 -> A*01:01:01, A*01:01:02, A*01:01:03
 #'
-#' @param allele_selection 
+#' @param allele_selection HLA allele for whicht the allele group shoulb be built.
 #'
-#' @return
+#' @return list of alleles
 #' @export
 #'
 #' @examples
+#' build_allele_group("A*01:01")
 build_allele_group <- function(allele_selection) {
     # find all alleles that correspond to allele
     # get valid alleles
@@ -74,12 +76,12 @@ build_allele_group <- function(allele_selection) {
     alleles_p_group <- get_p_group_members(p_group_name)
     
     # find alleles corresponding to selection
-    valid_p_alleles <- intersect(union(str_replace(p_group_name, "P", ""), alleles_p_group), 
+    valid_p_alleles <- intersect(union(stringr::str_replace(p_group_name, "P", ""), alleles_p_group), 
                                  valid_alleles)
     
     p_expand <- sapply(valid_p_alleles, function (X) {valid_alleles[
         # replace * by \\* to make the regexp work properly
-        grepl(str_replace(X, "\\*", "\\\\*"), valid_alleles)]
+        grepl(stringr::str_replace(X, "\\*", "\\\\*"), valid_alleles)]
     })
     
     union(valid_p_alleles, union(unlist(p_expand), allele_selection))
@@ -128,7 +130,7 @@ assemble_url_allele_freq <- function(hla_locus,
 #' @return data.frame object containing the result of the allele frequency query
 #' @export
 #'
-#' @examples library(AFNDquery)
+#' @examples
 #'
 #' # select frequencies of the A*02:01 allele,
 #' # for gold standard population with more than 10,000 individuals
@@ -211,7 +213,7 @@ assemble_url_haplotype_freq <- function(hla_selection,
                                      hla_sample_size) {
     
     hla_str <- assemble_haplotype_tring_url_from_allele_list(hla_selection)
-    freq_url_root <- str_c("http://www.allelefrequencies.net/hla6003a.asp?", 
+    freq_url_root <- stringr::str_c("http://www.allelefrequencies.net/hla6003a.asp?", 
                            hla_str,
                            "&hla_population=%s&hla_country=%s&hla_dataset=&hla_region=%s&hla_ethnic=%s&hla_study=&hla_order=order_1",
                            "&hla_sample_size_pattern=%s&hla_sample_size=%s&hla_sample_year_pattern=equal&hla_sample_year=&hla_loci=")
@@ -236,18 +238,13 @@ assemble_url_haplotype_freq <- function(hla_selection,
 #' @param hla_ethnic Ethnic origin of interest (e.g. Caucasoid, Siberian, ...)
 #' @param hla_sample_size_pattern Keyword used to define the filtering for a specific population size. e.g. "bigger_than", "equal", "less_than", "less_equal_than", "bigger_equal_than"
 #' @param hla_sample_size Integer number used to define the filtering for a specific population size, together with the hla_sample_size_pattern argument.
-#' @param standard Population standards, as defined in the package vignette. "g" - gold, "s" - silver, "a" - all
 #'
 #' @return data.frame object containing the result of the allele frequency query
 #' @export
 #'
-#' @examples library(AFNDquery)
-#'
-#' # select frequencies of the A*02:01 allele,
-#' # for gold standard population with more than 10,000 individuals
-#' sel <- query_allele_frequencies(hla_selection = "A*02:01",
-#' hla_sample_size_pattern = "bigger_than", hla_sample_size = 10000,
-#' standard="g")
+#' @examples
+#' # works only for one haplotype at a time
+#' query_haplotype_frequencies(hla_selection = c("A*02:01", "B*", "C*"), hla_region = "Europe")
 #'
 # only for one haplotype at a time
 query_haplotype_frequencies <- function(
@@ -305,7 +302,7 @@ query_single_population_detail <- function(population_id) {
 #' @return data.frame object containing the result of the population detail query
 #' @export
 #'
-#' @examples library(AFNDquery)
+#' @examples
 #' population_detail <- query_population_detail(0001986)
 query_population_detail <- function(population_ids) {
     pop_df <- data.frame()

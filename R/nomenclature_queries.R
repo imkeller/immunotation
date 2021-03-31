@@ -1,8 +1,12 @@
-#' get_mhcpan_input
+#' @title Get format for NetMHCpan tools
+#' @description NetMHCpan tools for MHC-peptide binding prediction require HLA complex
+#' names in a specific format. \code{get_mhcpan_input} formats a list of HLA alleles
+#' into a list of NetMHC-formated complexes.
 #'
-#' @param allele_list 
+#' @param allele_list list of HLA alles (e.g. c("A*01:01:01","B*27:01"))
+#' @param mhc_class ["MHC-I"|"MHC-II"] indicated which NetMHC you want to use.
 #'
-#' @return Protein chain list as formatted for MHCpan input
+#' @return protein chain list as formatted for MHCpan input
 #' @export
 #'
 #' @examples
@@ -45,10 +49,10 @@ build_mhcII_complexes <- function(protein_chain_names) {
     
     # DPA1 DPB1
     dp_complexes <- assemble_dp_dq(protein_chain_names_valid, type = "DP")
-    dp_complexes <- str_replace(dp_complexes, " ", "-")
+    dp_complexes <- stringr::str_replace(dp_complexes, " ", "-")
     # DQA1 DQB1
     dq_complexes <- assemble_dp_dq(protein_chain_names_valid, type = "DQ")
-    dq_complexes <- str_replace(dq_complexes, " ", "-")
+    dq_complexes <- stringr::str_replace(dq_complexes, " ", "-")
     # DRA DRB
     drb <- protein_chain_names_valid[grep("DRB", protein_chain_names_valid)]
     drb <- sapply(drb, convert_naming, add_hla = FALSE, add_star = TRUE, remove_colon = TRUE, star = "_")
@@ -75,10 +79,10 @@ convert_naming <- function(name, add_hla = TRUE, add_star = TRUE, remove_colon =
     hla_prefix <- ""
     if (add_hla) {hla_prefix <- "HLA-"}
     if (!add_star) {star <- ""}
-    locus_allele <- str_split(name, pattern = "\\*")[[1]]
+    locus_allele <- stringr::str_split(name, pattern = "\\*")[[1]]
     locus <- locus_allele[[1]]
     number <- locus_allele[[2]]
-    if (remove_colon) {number <- str_replace(number, ":", "")}
+    if (remove_colon) {number <- stringr::str_replace(number, ":", "")}
     paste0(hla_prefix, locus, star, number)
 }
 
@@ -91,10 +95,10 @@ simplify_allele <- function(name_list, from_format = NA, to_format = NA) {
 }
 
 reformat_allele <- function(allele_name) {
-    simplified_allele <- str_extract(allele_name, pattern = "^[:alnum:]+\\*\\d+:\\d+")
+    simplified_allele <- stringr::str_extract(allele_name, pattern = "^[:alnum:]+\\*\\d+:\\d+")
     if (any(is.na(simplified_allele))) {
         # check if maybe HLA formatting is used
-        simplified_allele <- str_extract(allele_name, pattern = "(?<=HLA-)[:alnum:]+\\*\\d+:\\d+")
+        simplified_allele <- stringr::str_extract(allele_name, pattern = "(?<=HLA-)[:alnum:]+\\*\\d+:\\d+")
         if (any(is.na(simplified_allele))) { stop("Input allele does not have the right formating: ", allele_name[is.na(simplified_allele)]) }
     }
     simplified_allele
@@ -105,7 +109,7 @@ allele_name_sanity_check <- function(allele_name) {
     hla_string <- grepl("HLA-", allele_name)
     if (hla_string) {
         # remove the HLA prefix
-        allele_name <- str_replace(allele_name, "HLA-", "")
+        allele_name <- stringr::str_replace(allele_name, "HLA-", "")
     }
     # check if * : pattern contained
     valid <- grepl("^.+\\*\\d+:\\d+", allele_name)
@@ -115,7 +119,7 @@ allele_name_sanity_check <- function(allele_name) {
 
 derive_gene_group <- function(allele_name) {
     allele_name <- allele_name_sanity_check(allele_name)
-    locus_allele <- str_split(allele_name, pattern = "\\*")[[1]]
+    locus_allele <- stringr::str_split(allele_name, pattern = "\\*")[[1]]
     locus <- locus_allele[[1]]
     allele <- locus_allele[[2]]
     
@@ -139,7 +143,11 @@ derive_gene_group <- function(allele_name) {
     g_group_return 
 }
 
-#' get_G_group
+#' @title G groups
+#' 
+#' @description Get the G groups for a list of HLA alleles. 
+#' [G groups](http://hla.alleles.org/alleles/g_groups.html) are groups of HLA alleles 
+#' that have identical nucleotide sequences across the exons encoding the peptide binding domains.
 #'
 #' @param allele_list List of alleles.
 #'
@@ -156,7 +164,7 @@ get_G_group <- function(allele_list) {
 
 derive_protein_group <- function(allele_name) {
     allele_name <- allele_name_sanity_check(allele_name)
-    locus_allele <- str_split(allele_name, pattern = "\\*")[[1]]
+    locus_allele <- stringr::str_split(allele_name, pattern = "\\*")[[1]]
     locus <- locus_allele[[1]]
     allele <- locus_allele[[2]]
     
@@ -165,7 +173,7 @@ derive_protein_group <- function(allele_name) {
     reg_expression_group <- paste0("/",allele,"/|^",allele,"/|/",allele,"$")
     # if the allele is given at a xx:xx:xx level, also allow for further matching to /01:03:01:xx/|^01:03:01:xx/|/01:03:01:xx
     # this is necessary because a lot of alleles in p group file are given at the xx:xx:xx:xx level
-    if(str_count(allele_name, ":") > 1 ) {
+    if(stringr::str_count(allele_name, ":") > 1 ) {
         add_regexp_group <- paste0("|/",allele,":|^",allele,":")
         reg_expression_group <- paste0(reg_expression_group, add_regexp_group)
     }
@@ -189,20 +197,24 @@ derive_protein_group <- function(allele_name) {
 # get p group elements
 get_p_group_members <- function(p_group_name) {
     p_group_name <- allele_name_sanity_check(p_group_name)
-    locus_allele <- str_split(p_group_name, pattern = "\\*")[[1]]
+    locus_allele <- stringr::str_split(p_group_name, pattern = "\\*")[[1]]
     locus <- locus_allele[[1]]
     allele <- locus_allele[[2]]
     p_group_selection <- p_group[p_group$locus == locus & !is.na(p_group$p_group_name),]
     return_list <- p_group_selection$p_group[p_group_selection$p_group_name == allele]
     if(length(return_list) == 0) {return(p_group_name)} else {
-        return_list <- str_split(return_list, pattern = "/")[[1]]
-        return_list <- str_c(locus,"*",return_list)
+        return_list <- stringr::str_split(return_list, pattern = "/")[[1]]
+        return_list <- stringr::str_c(locus,"*",return_list)
         return(return_list)}
 }
 
-#' get_P_group
+#' @title P groups
+#' 
+#' @description Get the P groups for a list of HLA alleles. 
+#' [P groups](http://hla.alleles.org/alleles/p_groups.html) are groups of HLA alleles 
+#' that have identical protein sequences in the peptide binding domains.
 #'
-#' @param allele_list 
+#' @param allele_list list of HLA alleles
 #'
 #' @return Named list of P-groups the input alleles belong to.
 #' @export
