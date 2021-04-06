@@ -7,10 +7,13 @@
 query_population_detail(population_ids)
 }
 \arguments{
-\item{population_ids}{List of numeric identifiers of the population that will be used for filtering. Thie identifier is defined by the Allele Frequency Net Database.}
+\item{population_ids}{List of numeric identifiers of the population that 
+will be used for filtering. The identifier is defined by the Allele 
+Frequency Net Database.}
 }
 \value{
-data.frame object containing the result of the population detail query
+data.frame object containing the result of the population detail 
+query
 }
 \description{
 Query population metainformation

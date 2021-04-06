@@ -7,7 +7,8 @@
 check_sample_size(hla_sample_size_pattern, hla_sample_size)
 }
 \arguments{
-\item{hla_sample_size_pattern}{one of "bigger_than", "equal", "less_than", "less_equal_than", "bigger_equal_than","different"}
+\item{hla_sample_size_pattern}{one of "bigger_than", "equal", "less_than", 
+"less_equal_than", "bigger_equal_than","different"}
 
 \item{hla_sample_size}{integer number used for population size}
 }

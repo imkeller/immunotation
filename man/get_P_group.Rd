@@ -2,7 +2,7 @@
 % Please edit documentation in R/nomenclature_queries.R
 \name{get_P_group}
 \alias{get_P_group}
-\title{get_P_group}
+\title{P groups}
 \usage{
 get_P_group(allele_list)
 }
@@ -13,7 +13,10 @@ get_P_group(allele_list)
 Named list of P-groups the input alleles belong to.
 }
 \description{
-get the P groups for a list of HLA alleles
+Get the P groups for a list of HLA alleles. 
+[P groups](http://hla.alleles.org/alleles/p_groups.html) are groups 
+of HLA alleles that have identical protein sequences in the peptide binding 
+domains.
 }
 \examples{
 allele_list <- c("DQB1*02:02:01", "DQB1*06:09:01")

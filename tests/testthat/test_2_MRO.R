@@ -58,14 +58,19 @@ test_that("get_serotypes() returns error when arguments are not correct", {
     expect_error(get_serotypes())
     expect_error(get_serotypes(allele_list = "A*01:01"))
     expect_error(get_serotypes(allele_list = "A*01:01", mhc_type = "foo"))
-    expect_error(get_serotypes(allele_list = "A*01:01", mhc_type = "MHC-I", organism = "marsian"))
+    expect_error(get_serotypes(allele_list = "A*01:01", mhc_type = "MHC-I", 
+                               organism = "marsian"))
     expect_error(get_serotypes(allele_list = "foo", mhc_type = "MHC-I"))
     expect_error(get_serotypes(allele_list = "foo", mhc_type = "MHC-II"))
-    expect_error(get_serotypes(allele_list = c("A*01:01","foo"), mhc_type = "MHC-II"))
+    expect_error(get_serotypes(allele_list = c("A*01:01","foo"), 
+                               mhc_type = "MHC-II"))
     
     # empty return when allele and organism not matching
-    expect_equal(length(get_serotypes(allele_list = "A*01:01", mhc_type = "MHC-I", organism = "mouse")), 0)
+    expect_equal(length(get_serotypes(allele_list = "A*01:01", 
+                                      mhc_type = "MHC-I", organism = "mouse")), 
+                 0)
     
     # correct query
-    expect_equal(get_serotypes(allele_list = "A*01:01", mhc_type = "MHC-I")[[1]], "HLA-A1 serotype")
+    expect_equal(get_serotypes(allele_list = "A*01:01", 
+                               mhc_type = "MHC-I")[[1]], "HLA-A1 serotype")
 })

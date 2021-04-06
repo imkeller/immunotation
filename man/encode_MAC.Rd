@@ -7,13 +7,21 @@
 encode_MAC(allele_list)
 }
 \arguments{
-\item{allele_list}{list of HLA alleles (e.g. c("A*01:01:01", "A*02:01:01", "A*03:01"))}
+\item{allele_list}{list of HLA alleles (e.g. c("A*01:01:01", "A*02:01:01", 
+"A*03:01"))}
 }
 \value{
 encoded MAC
 }
 \description{
-Encode a list of HLA alleles into multiple allele code (MAC).
+Encode a list of HLA alleles into multiple allele code (MAC). 
+The National Marrow Donor Program (NMDP) uses 
+[MAC](https://bioinformatics.bethematchclinical.org/
+hla-resources/allele-codes/allele-code-lists/) 
+to facilitate the reporting and comparison of HLA alleles. MAC represent 
+groups of HLA alleles and are useful when the 
+HLA typing is ambiguous and does not allow to narrow down one single allele 
+from a list of alleles.
 }
 \examples{
 allele_list <- c("A*01:01:01", "A*02:01:01", "A*03:01")

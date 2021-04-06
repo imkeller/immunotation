@@ -10,10 +10,17 @@ decode_MAC(MAC)
 \item{MAC}{multiple allele code (e.g. "A*01:ATJNV")}
 }
 \value{
-decoded MAC
+list of HLA alleles
 }
 \description{
 Decode a multiple allele code (MAC) into a list of HLA alleles.
+#' The National Marrow Donor Program (NMDP) uses 
+[MAC](https://bioinformatics.bethematchclinical.org/
+hla-resources/allele-codes/allele-code-lists/) 
+to facilitate the reporting and comparison of HLA alleles. MAC represent 
+groups of HLA alleles and are useful when the 
+HLA typing is ambiguous and does not allow to narrow down one single allele 
+from a list of alleles.
 }
 \examples{
 MAC <- "A*01:ATJNV"

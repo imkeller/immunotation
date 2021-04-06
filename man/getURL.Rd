@@ -5,12 +5,10 @@
 \title{getURL}
 \usage{
 getURL(
-  URL,
-  N.TRIES = 1L,
-  read_method = c("delim", "lines", "html"),
-  skip = 0,
-  delim = "\\t",
-  col_names = TRUE
+URL, N.TRIES = 1L,
+read_method = c("delim", "lines", "html"),
+skip = 0,
+delim = "\\t", col_names = TRUE
 )
 }
 \arguments{
@@ -18,12 +16,14 @@ getURL(
 
 \item{N.TRIES}{Integer, how often should the function try to read the URL?}
 
-\item{read_method}{Method to be used for reading of URL content ("delim" -> \code{readr::read_delim}, 
+\item{read_method}{Method to be used for reading of URL content 
+("delim" -> \code{readr::read_delim}, 
 "lines" -> \code{readr::read_lines}, "html" -> \code{xml2::read_html})}
 
 \item{skip}{integer indicating how many lines to skip when reading URL}
 
-\item{delim}{pattern used for delim (passed to \code{delim} of read functions)}
+\item{delim}{pattern used for delim 
+(passed to \code{delim} of read functions)}
 
 \item{col_names}{list of colnames to use}
 }

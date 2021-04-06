@@ -17,23 +17,32 @@ query_allele_frequencies(
 )
 }
 \arguments{
-\item{hla_locus}{HLA locus that will be used for filtering data. A, B, C, DPA1, DPB1, DQA1, DQB1, DRB1}
+\item{hla_locus}{HLA locus that will be used for filtering data. A, B, C, 
+DPA1, DPB1, DQA1, DQB1, DRB1}
 
-\item{hla_selection}{Allele that will be used for filtering data. e.g. A*01:01}
+\item{hla_selection}{Allele that will be used for filtering data. 
+e.g. A*01:01}
 
-\item{hla_population}{Numeric identifier of the population that will be used for filtering. This identifier is defined by the Allele Frequency Net Database.}
+\item{hla_population}{Numeric identifier of the population that will be used 
+for filtering. This identifier is defined by the Allele Frequency 
+Net Database.}
 
 \item{hla_country}{Country of interest (e.g. Germany, France, ...).}
 
-\item{hla_region}{Geographic region of interest (e.g. Europe, North Africa, ...)}
+\item{hla_region}{Geographic region of interest 
+(e.g. Europe, North Africa, ...)}
 
 \item{hla_ethnic}{Ethnic origin of interest (e.g. Caucasoid, Siberian, ...)}
 
-\item{hla_sample_size_pattern}{Keyword used to define the filtering for a specific population size. e.g. "bigger_than", "equal", "less_than", "less_equal_than", "bigger_equal_than"}
+\item{hla_sample_size_pattern}{Keyword used to define the filtering for a 
+specific population size. e.g. "bigger_than", "equal", "less_than", 
+"less_equal_than", "bigger_equal_than"}
 
-\item{hla_sample_size}{Integer number used to define the filtering for a specific population size, together with the hla_sample_size_pattern argument.}
+\item{hla_sample_size}{Integer number used to define the filtering for a 
+specific population size, together with the hla_sample_size_pattern argument.}
 
-\item{standard}{Population standards, as defined in the package vignette. "g" - gold, "s" - silver, "a" - all}
+\item{standard}{Population standards, as defined in the package vignette. 
+"g" - gold, "s" - silver, "a" - all}
 }
 \value{
 data.frame object containing the result of the allele frequency query

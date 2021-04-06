@@ -13,7 +13,8 @@ plot_allele_frequency(allele_frequency)
 ggplot2 object displaying the allele frequencies on a world map.
 }
 \description{
-\code{plot_allele_frequency} Generate a World map displaying the frequency of a given table of HLA alleles. Use the function
+\code{plot_allele_frequency} Generate a World map 
+displaying the frequency of a given table of HLA alleles. Use the function
 \link{query_allele_frequencies} to generate a table with allele frequencies.
 }
 \examples{

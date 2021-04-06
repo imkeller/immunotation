@@ -4,20 +4,21 @@
 \alias{assemble_protein_complex}
 \title{Assemble protein complex}
 \usage{
-assemble_protein_complex(organism_id)
+assemble_protein_complex(organism)
 }
 \arguments{
-\item{organism_id}{Organism for which the lookup should be built (e.g. "human", "mouse", ...). The list of valid 
+\item{organism}{Organism for which the lookup should be built (e.g. 
+"human", "mouse", ...). The list of valid 
 organisms can be found using the function \code{get_valid_organisms}}
 }
 \value{
-a data frame with the MHC complexes annotated in MRO (only completely annotated complexes are returned)
+a data frame with the MHC complexes annotated in MRO (only 
+completely annotated complexes are returned)
 }
 \description{
 Assemble a table or MHC protein complexes for a given organism.
 }
 \examples{
-org_id <- organism_input("mouse")
-assemble_protein_complex(org_id)
+assemble_protein_complex(organism = "mouse")
 
 }

@@ -7,13 +7,15 @@
 build_allele_group(allele_selection)
 }
 \arguments{
-\item{allele_selection}{HLA allele for whicht the allele group shoulb be built.}
+\item{allele_selection}{HLA allele for whicht
+the allele group should be built.}
 }
 \value{
 list of alleles
 }
 \description{
-\code{build_allele_group} e.g. A*01:01 -> A*01:01:01, A*01:01:02, A*01:01:03
+\code{build_allele_group} e.g. A*01:01 -> A*01:01:01, 
+A*01:01:02, A*01:01:03
 }
 \examples{
 build_allele_group("A*01:01")

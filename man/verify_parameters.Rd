@@ -30,7 +30,8 @@ verify_parameters(
 
 \item{hla_ethnic}{ethical origin used for allele frequency selection}
 
-\item{hla_sample_size_pattern}{one of "bigger_than", "equal", "less_than", "less_equal_than", "bigger_equal_than","different"}
+\item{hla_sample_size_pattern}{one of "bigger_than", "equal", "less_than", 
+"less_equal_than", "bigger_equal_than","different"}
 
 \item{hla_sample_size}{integer number used for population size}
 

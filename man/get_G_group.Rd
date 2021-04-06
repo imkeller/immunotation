@@ -2,7 +2,7 @@
 % Please edit documentation in R/nomenclature_queries.R
 \name{get_G_group}
 \alias{get_G_group}
-\title{get_G_group}
+\title{G groups}
 \usage{
 get_G_group(allele_list)
 }
@@ -13,7 +13,10 @@ get_G_group(allele_list)
 Named list of G-groups the input alleles belong to.
 }
 \description{
-get the G groups for a list of HLA alleles
+Get the G groups for a list of HLA alleles. 
+[G groups](http://hla.alleles.org/alleles/g_groups.html) are groups of 
+HLA alleles that have identical nucleotide sequences across the exons 
+encoding the peptide binding domains.
 }
 \examples{
 allele_list <- c("DQB1*02:02:01", "DQB1*06:09:01")

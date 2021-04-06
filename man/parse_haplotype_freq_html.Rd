@@ -7,11 +7,13 @@
 parse_haplotype_freq_html(haplotype_freq_table)
 }
 \arguments{
-\item{haplotype_freq_table}{haplotype frequency table parsed from AFND website}
+\item{haplotype_freq_table}{haplotype frequency table parsed
+from AFND website}
 }
 \value{
 haplotype_freq_table reformatted
 }
 \description{
-format the haplotype frequency table and select columns of interest
+format the haplotype frequency table and select 
+columns of interest
 }

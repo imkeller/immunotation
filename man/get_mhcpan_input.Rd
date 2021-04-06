@@ -9,13 +9,15 @@ get_mhcpan_input(allele_list, mhc_class)
 \arguments{
 \item{allele_list}{list of HLA alles (e.g. c("A*01:01:01","B*27:01"))}
 
-\item{mhc_class}{["MHC-I"|"MHC-II"]}
+\item{mhc_class}{["MHC-I"|"MHC-II"] indicated which NetMHC you want to use.}
 }
 \value{
-Protein chain list as formatted for MHCpan input
+protein chain list as formatted for MHCpan input
 }
 \description{
-get_mhcpan_input
+NetMHCpan tools for MHC-peptide binding prediction require 
+HLA complex names in a specific format. \code{get_mhcpan_input} formats a 
+list of HLA alleles into a list of NetMHC-formated complexes.
 }
 \examples{
 allele_list <- c("A*01:01:01","B*27:01")

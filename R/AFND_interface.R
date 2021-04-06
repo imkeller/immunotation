@@ -14,19 +14,24 @@ get_nb_pages <- function(page_tbl) {
 #' @param allele_freq_table allele frequency table parsed from AFND website
 #' @return allele_freq_table reformatted
 parse_allele_freq_html <- function(allele_freq_table) {
-    colnames(allele_freq_table) <- c("line", "allele", "", "population", "perc_individuals_with_allele",
-                                     "allele_frequency", "", "sample_size")
+    colnames(allele_freq_table) <- c("line", "allele", "", "population",
+        "perc_individuals_with_allele",
+        "allele_frequency", "", "sample_size")
     allele_freq_table[c("allele","population","allele_frequency","sample_size")]
 } 
 
 #' parse_haplotype_freq_html 
-#' @description format the haplotype frequency table and select columns of interest
-#' @param haplotype_freq_table haplotype frequency table parsed from AFND website
+#' @description format the haplotype frequency table and select 
+#' columns of interest
+#' @param haplotype_freq_table haplotype frequency table parsed
+#' from AFND website
 #' @return haplotype_freq_table reformatted
 parse_haplotype_freq_html <- function(haplotype_freq_table) {
-    colnames(haplotype_freq_table) <- c("line", "haplotype", "", "population", "perc_individuals_with_haplotype",
-                                     "", "sample_size", "")
-    haplotype_freq_table[c("haplotype","population","perc_individuals_with_haplotype","sample_size")]
+    colnames(haplotype_freq_table) <- c("line", "haplotype", "", "population", 
+        "perc_individuals_with_haplotype",
+        "", "sample_size", "")
+    haplotype_freq_table[c("haplotype","population",
+        "perc_individuals_with_haplotype","sample_size")]
 }
 
 #' extract_population_id 
@@ -61,8 +66,9 @@ read_complete_freq_table <- function(url, type) {
     
     if (length(page_nb) != 0) {
         # for 1-n pages query the allele frequencies
-        for (page_id in 1:page_nb) {
-            url_tmp <- paste0(url, "&page=", as.character(page_id), collapse = "")
+        for (page_id in seq(page_nb)) {
+            url_tmp <- paste0(url, "&page=", 
+                as.character(page_id), collapse = "")
             html_input_tmp <- getURL(url_tmp, read_method = "html")
             rvest_tables_tmp <- rvest::html_table(html_input_tmp, fill = TRUE)
             # add the population ID
@@ -118,7 +124,7 @@ extract_population_info <- function(data) {
 extract_sample_info <- function(data) {
     raw_sample_data <- rvest::html_table(
         rvest::html_nodes(data, ".table04:nth-child(6)"),
-        fill = TRUE)[[1]][1:8,]
+        fill = TRUE)[[1]][seq(8),]
     # reformat in a key value manner
     key_names <- stringr::str_replace(
         raw_sample_data$X2[3:nrow(raw_sample_data)], ":",
@@ -148,8 +154,8 @@ read_population_detail <- function(url, population_id) {
     # Assemble into a data frame
     # one row with all info in columns
     data.frame(population_id = population_id,
-               t(pop_data),
-               t(sample_data), stringsAsFactors = FALSE)
+        t(pop_data),
+        t(sample_data), stringsAsFactors = FALSE)
 }
 
 #
@@ -167,8 +173,9 @@ check_hla_locus <- function(hla_locus) {
         if (hla_locus %in% valid_hla_loci) {
             TRUE
         } else {
-            stop("The hla_locus ", hla_locus, " does not belong to the list of valid HLA loci: ",
-                 paste(valid_hla_loci, collapse=",")) 
+            stop("The hla_locus ", hla_locus, 
+                " does not belong to the list of valid HLA loci: ",
+                paste(valid_hla_loci, collapse=",")) 
         }}
 }
 
@@ -193,8 +200,9 @@ check_hla_selection <- function(hla_selection, query_type) {
             TRUE
         } else {
             wrong_allele <- hla_selection[!pattern_match]
-            stop("The following alleles do not seem to be formated correctly (expected format e.g. A*01:01): ",
-                 paste(wrong_allele, collapse=","))
+            stop("The following alleles do not seem to be formated correctly ",
+            "(expected format e.g. A*01:01): ",
+                paste(wrong_allele, collapse=","))
         }}
 }
 
@@ -206,13 +214,15 @@ check_population <- function(hla_population) {
         # We just check formatting
         # we do not check whether this population actually exists
         # format seems to be 4 numbers, but it has to be formatted as numeric
-        pattern_match <- sapply(hla_population, is.numeric)
+        pattern_match <- vapply(hla_population, is.numeric, 
+            FUN.VALUE = logical(1))
         if (all(pattern_match)) {
             TRUE
         } else {
             wrong_pop <- hla_population[!pattern_match]
-            stop("The following population IDs do not seem to be formated correctly (expected format e.g. 1920): ",
-                 paste(as.character(wrong_pop), collapse=","))
+            stop("The following population IDs do not seem to be formated ",
+            "correctly (expected format e.g. 1920): ",
+                paste(as.character(wrong_pop), collapse=","))
         }}
 }
 
@@ -228,23 +238,26 @@ get_valid_geographics <- function() {
     
     # country
     selection_str_1 <- rvest_tables[[3]]$X1[[5]]
-    split_selection_str_1 <- stringr::str_split(selection_str_1, "(\r\n\t\t\t\t\t)|(\r\n)")[[1]]
+    split_selection_str_1 <- stringr::str_split(selection_str_1,
+        "(\r\n\t\t\t\t\t)|(\r\n)")[[1]]
     
-    valid_countries <- stringr::str_split(split_selection_str_1[[4]], 
-                                          pattern = stringr::regex("(?<=[a-z]|\\))(?=[A-Z])"))[[1]]
+    valid_countries <- stringr::str_split(split_selection_str_1[[4]],
+        pattern = stringr::regex("(?<=[a-z]|\\))(?=[A-Z])"))[[1]]
     
     # region, ethnic
     selection_str_2 <- rvest_tables[[3]]$X1[[6]]
-    split_selection_str_2 <- stringr::str_split(selection_str_2, "(\r\n\t\t\t\t\t)|(\r\n)")[[1]]
+    split_selection_str_2 <- stringr::str_split(selection_str_2,
+        "(\r\n\t\t\t\t\t)|(\r\n)")[[1]]
     
-    valid_regions <- stringr::str_split(split_selection_str_2[[2]], 
-                                        pattern = stringr::regex("(?<=[a-z])(?=[A-Z])"))[[1]]
+    valid_regions <- stringr::str_split(split_selection_str_2[[2]],
+        pattern = stringr::regex("(?<=[a-z])(?=[A-Z])"))[[1]]
+    
     valid_ethnic <- stringr::str_split(split_selection_str_2[[4]], 
-                                       pattern = stringr::regex("(?<=[a-z])(?=[A-Z])"))[[1]]
+        pattern = stringr::regex("(?<=[a-z])(?=[A-Z])"))[[1]]
     
-    list(valid_countries = valid_countries, 
-         valid_regions = valid_regions,
-         valid_ethnic = valid_ethnic)
+    list(valid_countries = valid_countries,
+        valid_regions = valid_regions,
+        valid_ethnic = valid_ethnic)
 }
 
 valid_geographics <- get_valid_geographics()
@@ -258,40 +271,44 @@ check_geographics <- function(country, region, ethnic) {
     # do not test is its na
     if (!is.na(country)) {
         if(!(country %in% valid_geographics$valid_countries)) {
-            stop("Country not part of valid countries list: ", country, 
-                 ". Valid list of countries is: ", paste(valid_geographics$valid_countries, collapse = ", "))
+            stop("Country not part of valid countries list: ", country,
+                ". Valid list of countries is: ", 
+                paste(valid_geographics$valid_countries, collapse = ", "))
         }
     }
     if (!is.na(region)) {
         if(!(region %in% valid_geographics$valid_regions)) {
             stop("Region not part of valid regions list: ", region, 
-                 ". Valid list of regions is: ", paste(valid_geographics$valid_regions, collapse = ", "))
+                ". Valid list of regions is: ", 
+                paste(valid_geographics$valid_regions, collapse = ", "))
         }
     }
     if (!is.na(ethnic)) {
         if(!(ethnic %in% valid_geographics$valid_ethnic)) {
             stop("Ethnic origin not part of valid regions list: ", ethnic, 
-                 ". Valid list of ethnics origin is: ", paste(valid_geographics$valid_ethnic, collapse = ", "))
+                ". Valid list of ethnics origin is: ", 
+                paste(valid_geographics$valid_ethnic, collapse = ", "))
         }
     }
 }
 
 #' check_sample_size, stops if input not adequate
-#' @param hla_sample_size_pattern one of "bigger_than", "equal", "less_than", "less_equal_than", "bigger_equal_than","different"
+#' @param hla_sample_size_pattern one of "bigger_than", "equal", "less_than", 
+#' "less_equal_than", "bigger_equal_than","different"
 #' @param hla_sample_size integer number used for population size
 #' @return TRUE
 check_sample_size <- function(hla_sample_size_pattern, hla_sample_size) {
     if (is.na(hla_sample_size_pattern) & is.na(hla_sample_size)) {TRUE} else {
         valid_pattern <- c("bigger_than",
-                           "equal", "less_than",
-                           "less_equal_than", "bigger_equal_than", "different")
+            "equal", "less_than",
+            "less_equal_than", "bigger_equal_than", "different")
         
         if (hla_sample_size_pattern %in% valid_pattern) {
             if (is.numeric(hla_sample_size)) {TRUE}
             else { stop("hla sample size must be numeric") }
         } else {
             stop("The hla_sample_size_pattern must be one of these options: ",
-                 paste(valid_pattern, collapse=","))
+                paste(valid_pattern, collapse=","))
         }}
 }
 
@@ -304,7 +321,7 @@ check_standard <- function(standard) {
     if(standard %in% valid_standard) {
         TRUE
     } else { stop("standard must be one of the following: ",
-                  paste(valid_standard, collapse=",") )}
+        paste(valid_standard, collapse=",") )}
 }
 
 
@@ -316,29 +333,31 @@ check_standard <- function(standard) {
 #' @param hla_country country used for allele frequency selection
 #' @param hla_region geographical region used for allele frequency selection
 #' @param hla_ethnic ethical origin used for allele frequency selection
-#' @param hla_sample_size_pattern one of "bigger_than", "equal", "less_than", "less_equal_than", "bigger_equal_than","different"
+#' @param hla_sample_size_pattern one of "bigger_than", "equal", "less_than", 
+#' "less_equal_than", "bigger_equal_than","different"
 #' @param hla_sample_size integer number used for population size
 #' @param standard  one of "a" - all,"s" - silver,"g" - gold
 #' @param query_type "allele" or "haplotype"
 #'
 #' @return boolean to indicate, whether tests were passed
 verify_parameters <- function(hla_locus,
-                              # for now we don't check the 
-                              hla_selection,
-                              hla_population,
-                              hla_country,
-                              hla_region,
-                              hla_ethnic,
-                              hla_sample_size_pattern,
-                              hla_sample_size,
-                              standard = "a",
-                              query_type) {
+                            # for now we don't check the 
+                            hla_selection,
+                            hla_population,
+                            hla_country,
+                            hla_region,
+                            hla_ethnic,
+                            hla_sample_size_pattern,
+                            hla_sample_size,
+                            standard = "a",
+                            query_type) {
     
     # do the checks only if variables are not na
     if (all(is.na(c(hla_locus, hla_selection, hla_population,
-                    hla_sample_size_pattern,
-                    hla_sample_size)))) {
-        stop("You need to at least specify one of the paramters hla_locus, hla_selection, hla_population, hla_sample_size_pattern, hla_sample_size.")
+        hla_sample_size_pattern, hla_sample_size)))) {
+        stop("You need to at least specify one of the paramters hla_locus, ",
+        "hla_selection, hla_population, hla_sample_size_pattern, ",
+        "hla_sample_size.")
     } else {
         # do the checks only if variables are not na
         all(check_standard(standard),

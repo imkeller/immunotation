@@ -28,19 +28,23 @@ create_encode_handle <- function(allele_names) {
 #' @return curl handle fetch
 #'
 fetch_encoded_MAC <- function(handle) {
-    res <- curl::curl_fetch_memory("https://hml.nmdp.org/mac/api/encode", 
-                             handle = handle)
+    res <- curl::curl_fetch_memory("https://hml.nmdp.org/mac/api/encode",
+        handle = handle)
     res
 }
 
 #' @title Encode MAC 
 #' @description Encode a list of HLA alleles into multiple allele code (MAC). 
 #' The National Marrow Donor Program (NMDP) uses 
-#' [MAC](https://bioinformatics.bethematchclinical.org/hla-resources/allele-codes/allele-code-lists/) 
-#' to facilitate the reporting and comparison of HLA alleles. MAC represent groups of HLA alleles and are useful when the 
-#' HLA typing is ambiguous and does not allow to narrow down one single allele from a list of alleles.
+#' [MAC](https://bioinformatics.bethematchclinical.org/
+#' hla-resources/allele-codes/allele-code-lists/) 
+#' to facilitate the reporting and comparison of HLA alleles. MAC represent 
+#' groups of HLA alleles and are useful when the 
+#' HLA typing is ambiguous and does not allow to narrow down one single allele 
+#' from a list of alleles.
 #'
-#' @param allele_list list of HLA alleles (e.g. c("A*01:01:01", "A*02:01:01", "A*03:01"))
+#' @param allele_list list of HLA alleles (e.g. c("A*01:01:01", "A*02:01:01", 
+#' "A*03:01"))
 #'
 #' @return encoded MAC 
 #' @export
@@ -60,23 +64,25 @@ encode_MAC <- function(allele_list) {
 assemble_decode_url <- function(MAC) {
     # check that right format
     sprintf("https://hml.nmdp.org/mac/api/decode?typing=%s&expand=true",
-            MAC)
+        MAC)
 }
 
 fetch_decoded_MAC <- function(MAC) {
     url <- assemble_decode_url(MAC)
     h <- curl::new_handle()
-    res <- curl::curl_fetch_memory(url, 
-                             handle = h)
+    res <- curl::curl_fetch_memory(url, handle = h)
     res
 }
 
 #' @title Decode MAC
 #' @description Decode a multiple allele code (MAC) into a list of HLA alleles.
 #' #' The National Marrow Donor Program (NMDP) uses 
-#' [MAC](https://bioinformatics.bethematchclinical.org/hla-resources/allele-codes/allele-code-lists/) 
-#' to facilitate the reporting and comparison of HLA alleles. MAC represent groups of HLA alleles and are useful when the 
-#' HLA typing is ambiguous and does not allow to narrow down one single allele from a list of alleles.
+#' [MAC](https://bioinformatics.bethematchclinical.org/
+#' hla-resources/allele-codes/allele-code-lists/) 
+#' to facilitate the reporting and comparison of HLA alleles. MAC represent 
+#' groups of HLA alleles and are useful when the 
+#' HLA typing is ambiguous and does not allow to narrow down one single allele 
+#' from a list of alleles.
 #'
 #' @param MAC multiple allele code (e.g. "A*01:ATJNV")
 #'

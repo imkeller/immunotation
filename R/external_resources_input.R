@@ -5,16 +5,21 @@
 #' load_mro 
 #' @return MRO in ontology_index format
 load_mro <- function() {
-    obo_file_name <- system.file("extdata", "mro_mod.obo", package = "immunotation")
+    obo_file_name_tar <- system.file("extdata", "mro_mod.obo.tar.gz",
+        package = "immunotation")
+    utils::untar(obo_file_name_tar, exdir = system.file("extdata", package = "immunotation"))  
     
-    mro.obo <- ontologyIndex::get_OBO(obo_file_name, extract_tags="everything")
+    obo_file_name <- system.file("extdata", "mro_mod.obo",
+        package = "immunotation")
+    
+    mro.obo <- ontologyIndex::get_OBO(obo_file_name,
+        extract_tags="everything")
     
     mro.obo
 }
 
 #' @title MRO
 #' @description   \code{mro.obo}: MHC Restriction Ontology obo file.
-#' @export
 mro.obo <- load_mro()
 
 
@@ -26,24 +31,25 @@ mro.obo <- load_mro()
 #'
 #' @param URL  Indicated the url that will be read
 #' @param N.TRIES   Integer, how often should the function try to read the URL?
-#' @param read_method Method to be used for reading of URL content ("delim" -> \code{readr::read_delim}, 
+#' @param read_method Method to be used for reading of URL content 
+#' ("delim" -> \code{readr::read_delim}, 
 #' "lines" -> \code{readr::read_lines}, "html" -> \code{xml2::read_html})
 #' @param skip integer indicating how many lines to skip when reading URL 
-#' @param delim pattern used for delim (passed to \code{delim} of read functions)
+#' @param delim pattern used for delim 
+#' (passed to \code{delim} of read functions)
 #' @param col_names list of colnames to use
 #'
 #' @return returns a the content of the URL. The format of the return object
 #' depends on the read_method that was used.
-getURL <- function(URL, N.TRIES=1L, 
-                          read_method = c("delim", "lines", "html"),
-                          skip = 0, delim = "\t", col_names = TRUE) {
+getURL <- function(URL, N.TRIES=1L, read_method = c("delim", "lines", "html"),
+            skip = 0, delim = "\t", col_names = TRUE) {
     N.TRIES <- as.integer(N.TRIES)
     stopifnot(length(N.TRIES) == 1L, !is.na(N.TRIES))
     while (N.TRIES > 0L) {
         if (read_method == "delim") {
-            result <- tryCatch(suppressMessages(readr::read_delim(URL, 
-                                                 delim = delim, skip = skip,
-                                                 col_names = col_names)), error=identity)
+            result <- tryCatch(suppressMessages(readr::read_delim(URL,
+                delim = delim, skip = skip, col_names = col_names)),
+                error=identity)
         } else if (read_method == "lines") {
             result <- tryCatch(readr::read_lines(URL), error=identity)
         } else if (read_method == "html") {
@@ -56,8 +62,7 @@ getURL <- function(URL, N.TRIES=1L,
     }
     if (N.TRIES == 0L) {
         stop("'getURL()' failed:",
-             "\n  URL: ", URL,
-             "\n  error: ", conditionMessage(result))
+            "\n  URL: ", URL, "\n  error: ", conditionMessage(result))
     }
     result
 }
@@ -67,25 +72,27 @@ getURL <- function(URL, N.TRIES=1L,
 #
 
 # MHC I
-# netmhcI_input_template is an internal variable containing list of valid NetMHCpan input alleles
-netmhcI_input_template <- getURL(URL = "https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/allele.list", 
-                                read_method = "delim",
-                                delim = "\t",
-                                col_names = c("netmhc_input", "hla_chain_name", "HLA_gene"))
+# netmhcI_input_template is an internal variable containing list of valid 
+# NetMHCpan input alleles
+netmhcI_input_template <- getURL(
+    URL="https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/allele.list",
+    read_method = "delim", delim = "\t",
+    col_names = c("netmhc_input", "hla_chain_name", "HLA_gene"))
 
 # MHC II
-lines <- getURL(URL = "https://services.healthtech.dtu.dk/services/NetMHCIIpan-4.0/alleles_name.list",
-                read_method = "lines")
+lines <- getURL(
+    URL = paste0("https://services.healthtech.dtu.dk/services/",
+    "NetMHCIIpan-4.0/alleles_name.list"),
+    read_method = "lines")
 lines <- stringr::str_replace_all(lines, "\t+|\\s\\s+", "\t")
 netmhcII_input_template <- suppressWarnings(
     suppressMessages(readr::read_delim(lines, delim = "\t")))
 
 all_netmhcII_template <- c(netmhcII_input_template$DR, 
-                           netmhcII_input_template$`DP alpha`,
-                           netmhcII_input_template$`DP beta`,
-                           netmhcII_input_template$`DQ alpha`,
-                           netmhcII_input_template$`DQ beta`)
-# all_netmhcII_template is an internal variable containing list of valid NetMHCIIpan input alleles
+    netmhcII_input_template$`DP alpha`, netmhcII_input_template$`DP beta`,
+    netmhcII_input_template$`DQ alpha`, netmhcII_input_template$`DQ beta`)
+# all_netmhcII_template is an internal variable containing list of valid 
+# NetMHCIIpan input alleles
 all_netmhcII_template <- all_netmhcII_template[!is.na(all_netmhcII_template)]
 
 
@@ -94,15 +101,21 @@ all_netmhcII_template <- all_netmhcII_template[!is.na(all_netmhcII_template)]
 #
 
 # G group
-g_group <- getURL(URL = "https://raw.githubusercontent.com/ANHIG/IMGTHLA/Latest/wmda/hla_nom_g.txt", 
-                   read_method = "delim",
-                   skip = 6, delim = ";", col_names = c("locus", "g_group", "g_group_name"))
-g_group$locus <- stringr::str_extract(g_group$locus, pattern = "[:alnum:]+(?=\\*?)")
+g_group <- getURL(
+    URL = paste0("https://raw.githubusercontent.com/ANHIG/IMGTHLA/Latest",
+    "/wmda/hla_nom_g.txt"),
+    read_method = "delim", skip = 6, delim = ";", 
+    col_names = c("locus", "g_group", "g_group_name"))
+g_group$locus <- stringr::str_extract(g_group$locus,
+    pattern = "[:alnum:]+(?=\\*?)")
 
 
 # P group
-p_group <- getURL(URL = "https://raw.githubusercontent.com/ANHIG/IMGTHLA/Latest/wmda/hla_nom_p.txt", 
-                  read_method = "delim",
-                  skip = 6, delim = ";", col_names = c("locus", "p_group", "p_group_name"))
-p_group$locus <- stringr::str_extract(p_group$locus, pattern = "[:alnum:]+(?=\\*?)")
+p_group <- getURL(
+    URL = paste0("https://raw.githubusercontent.com/ANHIG/IMGTHLA/",
+    "Latest/wmda/hla_nom_p.txt"),
+    read_method = "delim", skip = 6, delim = ";", 
+    col_names = c("locus", "p_group", "p_group_name"))
+p_group$locus <- stringr::str_extract(p_group$locus,
+    pattern = "[:alnum:]+(?=\\*?)")
 

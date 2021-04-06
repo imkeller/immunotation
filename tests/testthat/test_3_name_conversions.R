@@ -12,11 +12,16 @@ test_that("get_G_group() and get_P_group() return error when arguments not adequ
 test_that("get_G_group() and get_P_group() return expected results", {
     # this should return something else
     expect_equal(get_G_group("HLA-A*01:01:01:01")[[1]], "A*01:01:01G")
-    expect_equal(get_G_group("A*01:01:01:01")[[1]], get_G_group("HLA-A*01:01:01:01")[[1]])
-    expect_equal(get_G_group("DQB1*02:02:01")[[1]], get_G_group("HLA-DQB1*02:02:01")[[1]])
+    expect_equal(get_G_group("A*01:01:01:01")[[1]], 
+                 get_G_group("HLA-A*01:01:01:01")[[1]])
+    expect_equal(get_G_group("DQB1*02:02:01")[[1]], 
+                 get_G_group("HLA-DQB1*02:02:01")[[1]])
     expect_equal(get_P_group("A*01:01:01:01")[[1]], "A*01:01P")
-    expect_equal(get_P_group("A*01:01:01:01")[[1]], get_P_group("HLA-A*01:01:01:01")[[1]])
-    expect_equal(get_P_group("DQB1*02:02:01")[[1]], get_P_group("HLA-DQB1*02:02:01")[[1]])
+    expect_equal(get_P_group("A*01:01:01:01")[[1]], 
+                 get_P_group("HLA-A*01:01:01:01")[[1]])
+    expect_equal(get_P_group("DQB1*02:02:01")[[1]], 
+                 
+                 get_P_group("HLA-DQB1*02:02:01")[[1]])
 })
 
 
@@ -41,12 +46,18 @@ test_that("get_mhcpan_input() returns error when alleles not in the list", {
 test_that("get_mhcpan_input() returns expected results", {
     # MHC I
     expect_equal(get_mhcpan_input("A*01:01", mhc_class = "MHC-I"), "HLA-A01:01")
-    expect_equal(get_mhcpan_input("A*01:01:01:01", mhc_class = "MHC-I"), "HLA-A01:01")
-    expect_equal(get_mhcpan_input("HLA-A*01:01", mhc_class = "MHC-I"), "HLA-A01:01")
+    expect_equal(get_mhcpan_input("A*01:01:01:01", mhc_class = "MHC-I"), 
+                 "HLA-A01:01")
+    expect_equal(get_mhcpan_input("HLA-A*01:01", mhc_class = "MHC-I"), 
+                 "HLA-A01:01")
     # MHC II
-    expect_equal(get_mhcpan_input("DRB1*01:01", mhc_class = "MHC-II"), "DRB1_0101")
-    expect_equal(get_mhcpan_input(allele_list = "HLA-DRB1*01:01", mhc_class = "MHC-II"), "DRB1_0101")
-    expect_equal(length(get_mhcpan_input(allele_list = c("DPA1*01:03:01", "DPB1*14:01:01"), mhc_class = "MHC-II")), 1)
+    expect_equal(get_mhcpan_input("DRB1*01:01", mhc_class = "MHC-II"), 
+                 "DRB1_0101")
+    expect_equal(get_mhcpan_input(allele_list = "HLA-DRB1*01:01", 
+                                  mhc_class = "MHC-II"), "DRB1_0101")
+    expect_equal(length(get_mhcpan_input(allele_list = c("DPA1*01:03:01", 
+                                                         "DPB1*14:01:01"), 
+                                         mhc_class = "MHC-II")), 1)
 })
 
 
@@ -58,7 +69,8 @@ test_that("encode_MAC() returns error when arguments not adequate", {
     expect_error(encode_MAC("A*01:01", "A*01:02"))
     
     # this should return an error warning
-    expect_equal(encode_MAC("foo"), "A service failures was logged.  Contact administrator for more information")
+    expect_equal(encode_MAC("foo"), 
+                 "A service failures was logged.  Contact administrator for more information")
 })
 
 test_that("encode_MAC() returns expected results", {
