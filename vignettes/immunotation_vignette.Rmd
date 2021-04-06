@@ -17,7 +17,6 @@ vignette: >
 ---
 
 ```{r, message=FALSE}
-library(tidyverse)
 library(immunotation)
 ```
 
@@ -183,14 +182,6 @@ the chain name.
 df <- retrieve_chain_lookup_table(organism = "human")
 
 DT::datatable(head(df, n=30))
-```
-
-```{r, message = FALSE}
-sum_table <- df %>%
-    group_by(mhc_type_names, locus_names) %>%
-    summarize(number_of_alleles = n())
-
-DT::datatable(sum_table)
 ```
 
 The list of annotated human protein complexes is:
