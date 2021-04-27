@@ -32,7 +32,8 @@ Imports: stringr,
 Suggests: BiocGenerics,
 	BiocStyle,
 	knitr, 
-	testthat
+	testthat, 
+    DT
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
 biocViews: Software, ImmunoOncology, BiomedicalInformatics, Genetics, Annotation

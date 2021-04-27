@@ -5,10 +5,12 @@
 \title{getURL}
 \usage{
 getURL(
-URL, N.TRIES = 1L,
-read_method = c("delim", "lines", "html"),
-skip = 0,
-delim = "\\t", col_names = TRUE
+  URL,
+  N.TRIES = 1L,
+  read_method = c("delim", "lines", "html"),
+  skip = 0,
+  delim = "\\t",
+  col_names = TRUE
 )
 }
 \arguments{

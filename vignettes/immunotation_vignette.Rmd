@@ -18,6 +18,7 @@ vignette: >
 
 ```{r, message=FALSE}
 library(immunotation)
+library(DT)
 ```
 
 # Introduction
