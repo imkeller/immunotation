@@ -101,9 +101,10 @@ all_netmhcII_template <- all_netmhcII_template[!is.na(all_netmhcII_template)]
 #
 
 # G group
+# wget https://raw.githubusercontent.com/ANHIG/IMGTHLA/Latest/wmda/hla_nom_g.txt
 g_group <- getURL(
-    URL = paste0("https://raw.githubusercontent.com/ANHIG/IMGTHLA/Latest",
-    "/wmda/hla_nom_g.txt"),
+    URL = system.file("extdata", "hla_nom_g.txt",
+        package = "immunotation"),
     read_method = "delim", skip = 6, delim = ";", 
     col_names = c("locus", "g_group", "g_group_name"))
 g_group$locus <- stringr::str_extract(g_group$locus,
@@ -111,9 +112,10 @@ g_group$locus <- stringr::str_extract(g_group$locus,
 
 
 # P group
+# wget https://raw.githubusercontent.com/ANHIG/IMGTHLA/Latest/wmda/hla_nom_p.txt
 p_group <- getURL(
-    URL = paste0("https://raw.githubusercontent.com/ANHIG/IMGTHLA/",
-    "Latest/wmda/hla_nom_p.txt"),
+    URL = system.file("extdata", "hla_nom_p.txt",
+        package = "immunotation"),
     read_method = "delim", skip = 6, delim = ";", 
     col_names = c("locus", "p_group", "p_group_name"))
 p_group$locus <- stringr::str_extract(p_group$locus,
