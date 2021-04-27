@@ -26,9 +26,8 @@ get_mhcpan_input <- function(allele_list, mhc_class) {
         # check that they are allowed in the MHC input
         valid_in_reference <- vapply(mhc_name_list, function(x) x %in%
                 netmhcI_input_template$netmhc_input, FUN.VALUE = logical(1))
-        if (!all(valid_in_reference)) {stop(paste(
-            mhc_name_list[!valid_in_reference], 
-            "not in NetMHCpan input list.\n"))}
+        if (!all(valid_in_reference)) {stop(mhc_name_list[!valid_in_reference], 
+            " not in NetMHCpan input list.\n")}
         mhc_name_list <- mhc_name_list[valid_in_reference]
     } else if (mhc_class == "MHC-II") {
         # check which chains belong together
@@ -50,8 +49,8 @@ build_mhcII_complexes <- function(protein_chain_names) {
     valid_in_reference <- valid_in_reference | grepl("DRA", protein_chain_names)
     
     if(!all(valid_in_reference)) {
-        stop(paste(protein_chain_names[!valid_in_reference],
-            "not in NetMHCIIpan input list.\n"))
+        stop(protein_chain_names[!valid_in_reference],
+            " not in NetMHCIIpan input list.\n")
     }
 
     protein_chain_names_valid <- protein_chain_names[valid_in_reference]       
