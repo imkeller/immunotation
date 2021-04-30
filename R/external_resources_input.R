@@ -5,11 +5,7 @@
 #' load_mro 
 #' @return MRO in ontology_index format
 load_mro <- function() {
-    obo_file_name_tar <- system.file("extdata", "mro_mod.obo.tar.gz",
-        package = "immunotation")
-    utils::untar(obo_file_name_tar, exdir = system.file("extdata", package = "immunotation"))  
-    
-    obo_file_name <- system.file("extdata", "mro_mod.obo",
+    obo_file_name <- system.file("extdata", "mro_mod.obo.gz",
         package = "immunotation")
     
     mro.obo <- ontologyIndex::get_OBO(obo_file_name,

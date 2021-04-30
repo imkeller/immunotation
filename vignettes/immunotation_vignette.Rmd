@@ -114,7 +114,7 @@ The National Marrow Donor Program (NMDP) uses
 to facilitate the reporting and comparison of HLA alleles [4]. 
 MAC represent groups of HLA alleles and are useful when the HLA typing is 
 ambiguous and does not allow to narrow down one single allele from a list of 
-alleles. The `immunotation` packages provides automated access to the 
+alleles. The `immunotation` package provides automated access to the 
 [MAC conversion tools](https://hml.nmdp.org/MacUI/) provided by NMDP.
 
 ## Variation of HLA alleles across human populations
