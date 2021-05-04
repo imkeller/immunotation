@@ -18,7 +18,7 @@ Collate:
     'nomenclature_queries.R'    
     'AFND_queries.R'                       
     'visualization.R'
-Depends: R (>= 4.0)
+Depends: R (>= 4.1)
 Imports: stringr, 
     ontologyIndex, 
     curl, 
