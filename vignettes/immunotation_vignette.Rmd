@@ -20,6 +20,26 @@ vignette: >
 library(immunotation)
 ```
 
+# Abstract
+
+MHC (major histocompatibility complex) molecules are cell surface complexes that 
+present antigens to T cells.  In humans they are encoded by the highly variable 
+HLA (human leukocyte antigen) genes of the hyperpolymorphic HLA locus. 
+More than 28,000 different HLA alleles have 
+been reported, with significant differences in allele frequencies between human 
+populations worldwide. 
+
+The package immunotation provides:
+
+* **Conversion and nomenclature functions** for consistent annotation of HLA 
+genes in typical immunoinformatics workflows such as for example the prediction 
+of MHC-presented peptides in different human donors. Supported naming schemes
+include HLA alleles, serotypes, G and P groups, MACs, ...
+
+* **Automated access to the Allele Frequency Net Database** (AFND) and 
+visualization of HLA allele frequencies in human populations worldwide.
+
+
 # Introduction
 
 ## MHC molecules
@@ -76,8 +96,7 @@ database [1].
 HLA genes and alleles are named according to rules defined by the 
 [WHO Nomenclature Committee for Factors of the HLA System](http://hla.alleles.org/nomenclature/naming.html). 
 The following scheme depicts the components of a complete HLA allele name. 
-In a deprecated naming scheme used before 2010, the components of the naming 
-scheme were not separated by ":".
+The different components of the name are separated by ":".
 
 **HLA-(gene)\*(group):(protein):(coding region):(non-coding region)(suffix)**
 
@@ -93,29 +112,44 @@ scheme were not separated by ":".
 For example:
 
 * *HLA-A\*01:01* and *HLA-A\*01:02* - have a similar but not identical protein 
-sequence
+sequence. Note in this example, that not all components listed above need to be
+indicated in a given HLA name. *HLA-A\*01:01* includes all HLA alleles with
+same protein sequence, but potentially different DNA sequence.
 * *HLA-A\*01:01:01* and *HLA-A\*01:01:02* - have the same protein sequence but 
 slightly different DNA sequences in the coding region 
 
+Note: In a deprecated naming scheme used before 2010, the components of the 
+naming scheme were not separated by ":".
+
 ### Protein and gene groups
 
-[*G groups*](http://hla.alleles.org/alleles/g_groups.html) are groups of 
-HLA alleles that have identical *nucleotide* sequences across the exons encoding 
-the peptide-binding domains.
+G and P groups is another naming concept, that is frequently used to groups 
+of HLA alleles encoding functionally similar proteins. The concept of *gene* 
+and *protein* int the G and P groups is independent from the naming
+components concerning gene and protein which were mentioned in section
+1.2.1.
+ 
+[**G groups**](http://hla.alleles.org/alleles/g_groups.html) are groups of 
+HLA alleles that have identical **nucleotide** sequences across the exons 
+encoding the peptide-binding domains.
 
-[*P groups*](http://hla.alleles.org/alleles/p_groups.html) are groups of 
-HLA alleles that have identical *protein* sequences in the peptide-binding 
+[**P groups**](http://hla.alleles.org/alleles/p_groups.html) are groups of 
+HLA alleles that have identical **protein** sequences in the peptide-binding 
 domains.
 
 ### MAC (Multiple allele codes)
 
-The National Marrow Donor Program (NMDP) uses 
+The National Marrow Donor Program (NMDP) uses, 
 [multiple allele codes (MAC)](https://bioinformatics.bethematchclinical.org/hla-resources/allele-codes/allele-code-lists/) 
-to facilitate the reporting and comparison of HLA alleles [4]. 
-MAC represent groups of HLA alleles and are useful when the HLA typing is 
+to facilitate the reporting and comparison of HLA alleles [4]. MACs 
+consist of the *gene*:*group* component of the
+classical HLA naming scheme in section 1.2.1 and a 
+letter code (e.g. **A\*01:ATJNV**).
+MACs represent groups of HLA alleles. They are useful when the HLA typing is 
 ambiguous and does not allow to narrow down one single allele from a list of 
 alleles. The `immunotation` packages provides automated access to the 
 [MAC conversion tools](https://hml.nmdp.org/MacUI/) provided by NMDP.
+
 
 ## Variation of HLA alleles across human populations
 
@@ -135,23 +169,23 @@ standards:
 
 | Criteria        | Gold standard           | Silver standard  | Bronze standard |
 | ----------- |:-----------------:|:-----------------:|:----------:|
-| Allele frequency      | Sum to 1 (± 0.015; or ± 0.05) | Sum to 1 (± 0.015; or ± 0.05) | other |
+| Allele frequency      | sum to 1 ± 0.015 | sum to 1 ± 0.015 | do not sum to 1 |
 | Sample size     | >= 50 individuals      |   any | any |
 | Resolution of allele frequency | four or more digits      | two or more digits | other |
 
 # Scope of the package
 
-The `immunotation` package provides tools for consistent annotation of HLA 
-genes, alleles and protein complexes. The package currently has two main 
+The `immunotation` package provides tools for consistent annotation of HLA
+alleles and protein complexes. The package currently has two main 
 functional modules: 
 
 *1. Conversion and nomenclature functions:*
 
 * access to annotations of MHC loci, genes, protein complexes and serotypes in 
 different species
-* conversion between different levels of HLA annotation, conversion between input and output of different immunoinformatics 
-tools
-* mapping between allele notation and G and P groups
+* conversion between different levels of HLA annotation
+* conversion between input and output of different immunoinformatics tools
+* mapping between allele notation and G- or P-groups
 * mapping between HLA allele groups and MAC notation
 
 *2. Access to HLA allele frequencies:*
@@ -165,7 +199,7 @@ worldwide
 
 Install the `immunotation` package by using BiocManager.
 
-```{r}
+```{r, eval = FALSE}
 if(!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("immunotation")

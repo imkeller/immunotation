@@ -108,12 +108,14 @@ test_that("query_haplotype_frequencies() return error when arguments not adequat
                                     hla_sample_size = NA)) 
     expect_error(query_haplotype_frequencies(hla_selection = "HLA-A", 
                                     hla_population = NA, hla_country = NA,
-                                    hla_region = NA, hla_ethnic = NA, hla_sample_size_pattern = NA,
+                                    hla_region = NA, hla_ethnic = NA, 
+                                    hla_sample_size_pattern = NA,
                                     hla_sample_size = NA)) 
     
     expect_error(query_haplotype_frequencies(hla_selection = NA, 
                                     hla_population = "foo", hla_country = NA,
-                                    hla_region = NA, hla_ethnic = NA, hla_sample_size_pattern = NA,
+                                    hla_region = NA, hla_ethnic = NA, 
+                                    hla_sample_size_pattern = NA,
                                     hla_sample_size = NA))
     expect_error(query_haplotype_frequencies(hla_selection = NA, 
                                     hla_population = NA, hla_country = "foo",
@@ -149,7 +151,8 @@ test_that("query_haplotype_frequencies() returns expected results", {
     
     expect_is(query_haplotype_frequencies(hla_selection = "A*01:01", 
                             hla_population = NA, hla_country = NA,
-                            hla_region = NA, hla_ethnic = NA, hla_sample_size_pattern = NA,
+                            hla_region = NA, hla_ethnic = NA, 
+                            hla_sample_size_pattern = NA,
                             hla_sample_size = NA), "data.frame")  
 })
 
