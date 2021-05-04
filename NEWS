@@ -4,3 +4,6 @@ Changes in version 0.99.1 (2021-01-01)
 Changes in version 0.99.6 (2021-05-04)
 + Adressed comments from Bioconductor review
 + included a mro.obo.gz file which can be read without unzipping
+
+Changes in version 0.99.7 (2021-05-04)
++ Increased number of times to try to connect to webresource
