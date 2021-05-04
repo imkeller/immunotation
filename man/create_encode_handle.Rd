@@ -15,3 +15,4 @@ curl handle
 \description{
 create_encode_handle
 }
+\keyword{internal}

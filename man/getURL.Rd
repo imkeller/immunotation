@@ -36,3 +36,4 @@ depends on the read_method that was used.
 \description{
 getURL
 }
+\keyword{internal}

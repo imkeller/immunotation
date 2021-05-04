@@ -15,3 +15,4 @@ TRUE
 \description{
 check_hla_locus, stops if input not adequate
 }
+\keyword{internal}

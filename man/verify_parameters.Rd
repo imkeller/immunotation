@@ -45,3 +45,4 @@ boolean to indicate, whether tests were passed
 \description{
 verify_parameters
 }
+\keyword{internal}

@@ -5,6 +5,7 @@
 #' get_nb_pages
 #' @param page_tbl html input page
 #' @return integer number of pages in the html input
+#' @keywords internal
 get_nb_pages <- function(page_tbl) {
     stringr::str_extract(page_tbl$X6, "\\d*$")
 }
@@ -13,6 +14,7 @@ get_nb_pages <- function(page_tbl) {
 #' @description format the allele frequency table and select columns of interest
 #' @param allele_freq_table allele frequency table parsed from AFND website
 #' @return allele_freq_table reformatted
+#' @keywords internal
 parse_allele_freq_html <- function(allele_freq_table) {
     colnames(allele_freq_table) <- c("line", "allele", "", "population",
         "perc_individuals_with_allele",
@@ -26,6 +28,7 @@ parse_allele_freq_html <- function(allele_freq_table) {
 #' @param haplotype_freq_table haplotype frequency table parsed
 #' from AFND website
 #' @return haplotype_freq_table reformatted
+#' @keywords internal
 parse_haplotype_freq_html <- function(haplotype_freq_table) {
     colnames(haplotype_freq_table) <- c("line", "haplotype", "", "population", 
         "perc_individuals_with_haplotype",
@@ -38,6 +41,7 @@ parse_haplotype_freq_html <- function(haplotype_freq_table) {
 #' @description extract the population ids from the html result
 #' @param data html from AFND website
 #' @return population ids
+#' @keywords internal
 extract_population_id <- function(data) {
     pop_hrefs <- rvest::html_attr(
         rvest::html_nodes(
@@ -51,6 +55,7 @@ extract_population_id <- function(data) {
 #' @param url URL of the website containing frequency table
 #' @param type ["allele"|"haplotype"] 
 #' @return frequency table
+#' @keywords internal
 read_complete_freq_table <- function(url, type) {
     html_input <- getURL(url, read_method = "html")
     
@@ -95,6 +100,7 @@ read_complete_freq_table <- function(url, type) {
 #' extract_population_name
 #' @param data html input page
 #' @return population name
+#' @keywords internal
 extract_population_name <- function(data) {
     rvest::html_text(
         rvest::html_nodes(data, xpath = "//td//h1"),
@@ -104,6 +110,7 @@ extract_population_name <- function(data) {
 #' extract_population_info
 #' @param data html input page
 #' @return population information
+#' @keywords internal
 extract_population_info <- function(data) {
     raw_pop_data <- rvest::html_table(
         rvest::html_nodes(data, ".table04:nth-child(4)"),
@@ -121,6 +128,7 @@ extract_population_info <- function(data) {
 #' extract_sample_info
 #' @param data html input page
 #' @return sample information
+#' @keywords internal
 extract_sample_info <- function(data) {
     raw_sample_data <- rvest::html_table(
         rvest::html_nodes(data, ".table04:nth-child(6)"),
@@ -139,6 +147,7 @@ extract_sample_info <- function(data) {
 #' @param url url of the page containing population information
 #' @param population_id numeric population identifier
 #' @return population information
+#' @keywords internal
 read_population_detail <- function(url, population_id) {
     data <- getURL(url, read_method = "html")
     
@@ -165,6 +174,7 @@ read_population_detail <- function(url, population_id) {
 #' check_hla_locus, stops if input not adequate
 #' @param hla_locus locus of hla frequencies to query
 #' @return TRUE
+#' @keywords internal
 check_hla_locus <- function(hla_locus) {
     if (is.na(hla_locus)) {TRUE} else {
         # classical HLA loci
@@ -183,6 +193,7 @@ check_hla_locus <- function(hla_locus) {
 #' @param hla_selection HLA alleles used for selection
 #' @param query_type ["allele"|"haplotype"] type of AFND query
 #' @return TRUE
+#' @keywords internal
 check_hla_selection <- function(hla_selection, query_type) {
     if (any(is.na(hla_selection))) {TRUE} else {
         # we do not check whether the indicated allele is in the database
@@ -209,6 +220,7 @@ check_hla_selection <- function(hla_selection, query_type) {
 #' check_population, stops if input not adequate
 #' @param hla_population population id
 #' @return TRUE
+#' @keywords internal
 check_population <- function(hla_population) {
     if (is.na(hla_population)) {TRUE} else {
         # We just check formatting
@@ -230,6 +242,7 @@ check_population <- function(hla_population) {
 #' get_valid_geographics
 #' @description get a list of valid countries, regions and ethnic origins
 #' @return list of valid countries, regions and ethnic origin
+#' @keywords internal
 get_valid_geographics <- function() {
     url <- "http://www.allelefrequencies.net/hla6006a.asp?"
     html_input <- getURL(url, read_method = "html")
@@ -267,6 +280,7 @@ valid_geographics <- get_valid_geographics()
 #' @param region geographical region used for allele frequency selection
 #' @param ethnic ethical origin used for allele frequency selection
 #' @return TRUE
+#' @keywords internal
 check_geographics <- function(country, region, ethnic) {
     # do not test is its na
     if (!is.na(country)) {
@@ -297,6 +311,7 @@ check_geographics <- function(country, region, ethnic) {
 #' "less_equal_than", "bigger_equal_than","different"
 #' @param hla_sample_size integer number used for population size
 #' @return TRUE
+#' @keywords internal
 check_sample_size <- function(hla_sample_size_pattern, hla_sample_size) {
     if (is.na(hla_sample_size_pattern) & is.na(hla_sample_size)) {TRUE} else {
         valid_pattern <- c("bigger_than",
@@ -315,6 +330,7 @@ check_sample_size <- function(hla_sample_size_pattern, hla_sample_size) {
 #' check_standard, stops if input not adequate
 #' @param standard one of "a" - all,"s" - silver,"g" - gold
 #' @return TRUE
+#' @keywords internal
 check_standard <- function(standard) {
     # all, silver or gold standard of population data quality
     valid_standard <- c("a","s","g")
@@ -340,6 +356,7 @@ check_standard <- function(standard) {
 #' @param query_type "allele" or "haplotype"
 #'
 #' @return boolean to indicate, whether tests were passed
+#' @keywords internal
 verify_parameters <- function(hla_locus,
                             # for now we don't check the 
                             hla_selection,

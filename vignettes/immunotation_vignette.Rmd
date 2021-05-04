@@ -18,7 +18,6 @@ vignette: >
 
 ```{r, message=FALSE}
 library(immunotation)
-library(DT)
 ```
 
 # Introduction
@@ -39,18 +38,19 @@ peptide antigens to T cells that express the MHC-II specific co-receptor CD4.
 The repertoire of peptide antigens presented on MHC molecules depends on the 
 sequence of the genes encoded in the MHC locus of an individual. Since the 
 adaptive immune response to an invading pathogen relies on MHC-dependent 
-antigen presentation, a high diversity of MHC genes on population level is 
+antigen presentation, a high diversity of MHC genes on a population level is 
 beneficial from an evolutionary point of view. Indeed, MHC molecules are 
 polygenic, which means that the MHC locus contains several different genes 
 encoding MHC class I and MHC class II molecules. Moreover, MHC genes are 
-polymorphic, which means that on a population level, there exist multiple 
-variants (alleles) of each gene.
+polymorphic, which means that on a population level, multiple 
+variants (alleles) of each gene exist.
 
 Several experimental techniques exist to identify the different MHC genes, 
-alleles and protein complexes. Protein complexes for example can be identified 
-by binding of subtype-specific anti-MHC antibodies. The resulting information on 
-the protein complex is called MHC serotype. Moreover, MHC genes and alleles can 
-be identified by hybridization with sequence specific probes or by sequencing 
+alleles and protein complexes. Protein complexes for example can be classified 
+into serotypes by binding of subtype-specific anti-MHC antibodies. The resulting 
+information on the protein complex is called the MHC serotype. Moreover, MHC 
+genes and alleles can 
+be identified by hybridization with sequence-specific probes or by sequencing 
 and mapping to reference databases. However, these techniques often  cover only 
 specific regions of the MHC genes and thus do not allow a complete and 
 unambiguous allele identification.
@@ -67,7 +67,7 @@ scheme provided by the MRO.
 
 In humans, MHC molecules are encoded by highly variable HLA 
 (human leukocyte antigen) genes of the hyperpolymorphic HLA locus on 
-chromosome 6. Up to date more than 28.000 different alleles have been 
+chromosome 6. To date, more than 28.000 different alleles have been 
 registered in the [IPD-IMGT/HLA](http://hla.alleles.org/nomenclature/index.html) 
 database [1].
 
@@ -85,26 +85,26 @@ scheme were not separated by ":".
 | ----------- |:-----------------:|:-----------------:|
 | gene        | HLA gene | A, B, C, DPA1, DPB1, ... |
 | group       | group of HLA alleles with similar protein sequence (protein sequence homology) |  01 |
-| protein     | all HLA alleles with same protein sequence  | 01 |
-| coding region     | all HLA alleles with same DNA sequence in coding region | 01 |
-| non-coding region     | all HLA alleles with same DNA sequence in non-coding region | 01 |
-| suffix    | indicates changes expression level (e.g. N - not expressed, L - low surface expression)  | N |
+| protein     | all HLA alleles with the same protein sequence  | 01 |
+| coding region     | all HLA alleles with the same DNA sequence in the coding region | 01 |
+| non-coding region     | all HLA alleles with the same DNA sequence in the non-coding region | 01 |
+| suffix    | indicates changes in expression level (e.g. N - not expressed, L - low surface expression)  | N |
 
 For example:
 
 * *HLA-A\*01:01* and *HLA-A\*01:02* - have a similar but not identical protein 
 sequence
 * *HLA-A\*01:01:01* and *HLA-A\*01:01:02* - have the same protein sequence but 
-slightly different DNA sequences in coding region 
+slightly different DNA sequences in the coding region 
 
 ### Protein and gene groups
 
 [*G groups*](http://hla.alleles.org/alleles/g_groups.html) are groups of 
 HLA alleles that have identical *nucleotide* sequences across the exons encoding 
-the peptide binding domains.
+the peptide-binding domains.
 
 [*P groups*](http://hla.alleles.org/alleles/p_groups.html) are groups of 
-HLA alleles that have identical *protein* sequences in the peptide binding 
+HLA alleles that have identical *protein* sequences in the peptide-binding 
 domains.
 
 ### MAC (Multiple allele codes)
@@ -114,7 +114,7 @@ The National Marrow Donor Program (NMDP) uses
 to facilitate the reporting and comparison of HLA alleles [4]. 
 MAC represent groups of HLA alleles and are useful when the HLA typing is 
 ambiguous and does not allow to narrow down one single allele from a list of 
-alleles. The `immunotation` package provides automated access to the 
+alleles. The `immunotation` packages provides automated access to the 
 [MAC conversion tools](https://hml.nmdp.org/MacUI/) provided by NMDP.
 
 ## Variation of HLA alleles across human populations
@@ -127,7 +127,7 @@ worldwide [5]. In addition to a large collection of HLA allele frequency
 datasets, the database also contains datasets for allele frequencies of KIR 
 (Killer Cell Immunoglobulin-like Receptor) genes, MIC (Major histocompatibility 
 complex class I chain related) and cytokine genes. The current version of the 
-`immunotation` package allows the automated R access to the HLA related datasets 
+`immunotation` package allows automated R access to the HLA related datasets 
 in AFND.
 
 The HLA frequency datasets in AFND are classified according to the following 
@@ -149,18 +149,27 @@ functional modules:
 
 * access to annotations of MHC loci, genes, protein complexes and serotypes in 
 different species
-* conversion between different levels of HLA annotation, namely specific 
-functions to convert between input and output of different immunoinformatics 
+* conversion between different levels of HLA annotation, conversion between input and output of different immunoinformatics 
 tools
-* mapping of alleles and G groups and P groups.
-* mapping of HLA allele groups and MAC
+* mapping between allele notation and G and P groups
+* mapping between HLA allele groups and MAC notation
 
 *2. Access to HLA allele frequencies:*
 
-* automated access to datasets stored in the 
-[AFND](http://www.allelefrequencies.net/)
+* automated access to datasets stored in the Allele Frequency Net Database
+([AFND](http://www.allelefrequencies.net/))
 * querying and visualization of HLA allele frequencies in human populations 
 worldwide
+
+## Installation
+
+Install the `immunotation` package by using BiocManager.
+
+```{r}
+if(!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("immunotation")
+```
 
 # HLA genes, alleles, protein complexes and serotypes
 
@@ -286,7 +295,7 @@ DT::datatable(sel1b)
 ```
 
 ```{r}
-hla_selection <- build_allele_group("A*01:358")
+hla_selection <- build_allele_group("A*01:02")
 
 sel1 <- query_allele_frequencies(hla_selection = hla_selection, 
                                 hla_sample_size_pattern = "bigger_than", 
@@ -372,3 +381,10 @@ Tissue Antigens (2013).
 [5] Gonzalez-Galarza FF, McCabe A, Santos EJ at al. Allele frequency net 
 database (AFND) 2020 update: gold-standard data classification, open access 
 genotype data and new query tools. Nucleic Acid Research (2020).
+
+# Session Information
+
+```{r}
+sessionInfo()
+```
+

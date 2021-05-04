@@ -4,8 +4,9 @@
 
 #' load_mro 
 #' @return MRO in ontology_index format
+#' @keywords internal
 load_mro <- function() {
-    obo_file_name <- system.file("extdata", "mro_mod.obo.gz",
+    obo_file_name <- system.file("extdata", "mro.obo.gz",
         package = "immunotation")
     
     mro.obo <- ontologyIndex::get_OBO(obo_file_name,
@@ -16,6 +17,7 @@ load_mro <- function() {
 
 #' @title MRO
 #' @description   \code{mro.obo}: MHC Restriction Ontology obo file.
+#' @keywords internal
 mro.obo <- load_mro()
 
 
@@ -37,8 +39,10 @@ mro.obo <- load_mro()
 #'
 #' @return returns a the content of the URL. The format of the return object
 #' depends on the read_method that was used.
-getURL <- function(URL, N.TRIES=1L, read_method = c("delim", "lines", "html"),
-            skip = 0, delim = "\t", col_names = TRUE) {
+#' @keywords internal
+getURL <- function(URL, N.TRIES=1L, 
+    read_method = c("delim", "lines", "html"),
+    skip = 0, delim = "\t", col_names = TRUE) {
     N.TRIES <- as.integer(N.TRIES)
     stopifnot(length(N.TRIES) == 1L, !is.na(N.TRIES))
     while (N.TRIES > 0L) {
@@ -96,12 +100,35 @@ all_netmhcII_template <- all_netmhcII_template[!is.na(all_netmhcII_template)]
 # G and P groups
 #
 
+#' get_external_file
+#'
+#' @param file  Indicated the file that will be read
+#' @param skip integer indicating how many lines to skip when reading URL 
+#' @param delim pattern used for delim 
+#' (passed to \code{delim} of read functions)
+#' @param col_names list of colnames to use
+#'
+#' @return returns a the content of the file. The format of the return object
+#' depends on the read_method that was used.
+#' @keywords internal
+get_external_file <- function(file, skip = 0, delim = "\t", col_names = TRUE) {
+    result <- tryCatch(suppressMessages(readr::read_delim(file,
+            delim = delim, skip = skip, col_names = col_names)),
+            error=identity)
+    if (!inherits(result, "error")) {
+        return(result)
+    }
+    else {
+        stop("'get_external_file()' failed:",
+            "\n  file: ", file, "\n  error: ", conditionMessage(result))
+    }
+}
+
 # G group
 # wget https://raw.githubusercontent.com/ANHIG/IMGTHLA/Latest/wmda/hla_nom_g.txt
-g_group <- getURL(
-    URL = system.file("extdata", "hla_nom_g.txt",
+g_group <- get_external_file(file = system.file("extdata", "hla_nom_g.txt",
         package = "immunotation"),
-    read_method = "delim", skip = 6, delim = ";", 
+    skip = 6, delim = ";", 
     col_names = c("locus", "g_group", "g_group_name"))
 g_group$locus <- stringr::str_extract(g_group$locus,
     pattern = "[:alnum:]+(?=\\*?)")
@@ -109,10 +136,9 @@ g_group$locus <- stringr::str_extract(g_group$locus,
 
 # P group
 # wget https://raw.githubusercontent.com/ANHIG/IMGTHLA/Latest/wmda/hla_nom_p.txt
-p_group <- getURL(
-    URL = system.file("extdata", "hla_nom_p.txt",
+p_group <- get_external_file(file = system.file("extdata", "hla_nom_p.txt",
         package = "immunotation"),
-    read_method = "delim", skip = 6, delim = ";", 
+    skip = 6, delim = ";", 
     col_names = c("locus", "p_group", "p_group_name"))
 p_group$locus <- stringr::str_extract(p_group$locus,
     pattern = "[:alnum:]+(?=\\*?)")

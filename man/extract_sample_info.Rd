@@ -15,3 +15,4 @@ sample information
 \description{
 extract_sample_info
 }
+\keyword{internal}

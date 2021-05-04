@@ -13,4 +13,4 @@ mro.obo
 \description{
 \code{mro.obo}: MHC Restriction Ontology obo file.
 }
-\keyword{datasets}
+\keyword{internal}

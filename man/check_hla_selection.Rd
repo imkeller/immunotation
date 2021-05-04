@@ -17,3 +17,4 @@ TRUE
 \description{
 check_hla_selection, stops if input not adequate
 }
+\keyword{internal}

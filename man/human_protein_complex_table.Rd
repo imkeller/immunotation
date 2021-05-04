@@ -16,4 +16,9 @@ human_protein_complex_table
 \details{
 \code{human_protein_complex_table}: human_protein_complex_table.
 }
+\examples{
+# The human protein complex table is available in the following
+# exported variable
+human_protein_complex_table
+}
 \keyword{datasets}

@@ -12,3 +12,4 @@ MRO in ontology_index format
 \description{
 load_mro
 }
+\keyword{internal}

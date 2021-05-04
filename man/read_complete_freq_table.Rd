@@ -17,3 +17,4 @@ frequency table
 \description{
 read_complete_freq_table
 }
+\keyword{internal}

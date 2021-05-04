@@ -17,3 +17,4 @@ haplotype_freq_table reformatted
 format the haplotype frequency table and select 
 columns of interest
 }
+\keyword{internal}

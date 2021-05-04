@@ -15,3 +15,4 @@ curl handle fetch
 \description{
 fetch_encoded_MAC
 }
+\keyword{internal}

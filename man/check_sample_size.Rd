@@ -18,3 +18,4 @@ TRUE
 \description{
 check_sample_size, stops if input not adequate
 }
+\keyword{internal}

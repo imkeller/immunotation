@@ -15,3 +15,4 @@ TRUE
 \description{
 check_standard, stops if input not adequate
 }
+\keyword{internal}

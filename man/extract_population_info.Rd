@@ -15,3 +15,4 @@ population information
 \description{
 extract_population_info
 }
+\keyword{internal}

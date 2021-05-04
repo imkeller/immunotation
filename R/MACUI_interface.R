@@ -14,6 +14,7 @@ assemble_encode_curlopts <- function(allele_names) {
 #'
 #' @return curl handle
 #'
+#'@keywords internal
 create_encode_handle <- function(allele_names) {
     h <- curl::new_handle()
     opts_string <- assemble_encode_curlopts(allele_names)
@@ -27,7 +28,10 @@ create_encode_handle <- function(allele_names) {
 #'
 #' @return curl handle fetch
 #'
+#'@keywords internal
 fetch_encoded_MAC <- function(handle) {
+    # the function returns an understandable
+    # error message if web resource not reachable
     res <- curl::curl_fetch_memory("https://hml.nmdp.org/mac/api/encode",
         handle = handle)
     res
@@ -56,7 +60,14 @@ fetch_encoded_MAC <- function(handle) {
 encode_MAC <- function(allele_list) {
     handle <- create_encode_handle(allele_list)
     curl_res <- fetch_encoded_MAC(handle)
-    rawToChar(curl_res$content)
+    result <- rawToChar(curl_res$content)
+    # warning message if result does not seem right
+    if(result == "") {
+        warning("encode_MAC function returned an empty string. Please check ",
+            "input allele list", allele_list)
+    } else {
+        return(result)
+    }
 }
 
 # DECODE -----
@@ -70,6 +81,8 @@ assemble_decode_url <- function(MAC) {
 fetch_decoded_MAC <- function(MAC) {
     url <- assemble_decode_url(MAC)
     h <- curl::new_handle()
+    # the function returns an understandable
+    # error message if web resource not reachable
     res <- curl::curl_fetch_memory(url, handle = h)
     res
 }
@@ -95,5 +108,12 @@ fetch_decoded_MAC <- function(MAC) {
 #' 
 decode_MAC <- function(MAC) {
     curl_res <- fetch_decoded_MAC(MAC)
-    rawToChar(curl_res$content)
+    result <- rawToChar(curl_res$content)
+    # warning message if result does not seem right
+    if(result == "") {
+        warning("decode_MAC function returned an empty string. Please check ",
+            "input MAC", MAC)
+    } else {
+        return(result)
+    }
 }

@@ -1,5 +1,6 @@
 #' @importFrom rlang .data
 #' @importFrom rlang .data
+#' @keywords internal
 assemble_frequency_lat_long_df <- function(global_alleles) {
     
     global_alleles$sample_size <- as.integer(

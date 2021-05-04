@@ -15,3 +15,4 @@ integer number of pages in the html input
 \description{
 get_nb_pages
 }
+\keyword{internal}

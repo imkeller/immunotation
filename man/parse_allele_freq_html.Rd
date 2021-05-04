@@ -15,3 +15,4 @@ allele_freq_table reformatted
 \description{
 format the allele frequency table and select columns of interest
 }
+\keyword{internal}

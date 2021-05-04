@@ -19,3 +19,4 @@ TRUE
 \description{
 check_geographics, stops if input not adequate
 }
+\keyword{internal}

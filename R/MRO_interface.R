@@ -255,6 +255,11 @@ assemble_protein_complex <- function(organism) {
 #' human_protein_complex_table
 #' @details   \code{human_protein_complex_table}: human_protein_complex_table.
 #' @export
+#' 
+#' @examples
+#' # The human protein complex table is available in the following
+#' # exported variable
+#' human_protein_complex_table
 human_protein_complex_table <- assemble_protein_complex(organism = "human")
 
 
