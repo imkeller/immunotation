@@ -40,7 +40,7 @@ mro.obo <- load_mro()
 #' @return returns a the content of the URL. The format of the return object
 #' depends on the read_method that was used.
 #' @keywords internal
-getURL <- function(URL, N.TRIES=1L, 
+getURL <- function(URL, N.TRIES=3L, 
     read_method = c("delim", "lines", "html"),
     skip = 0, delim = "\t", col_names = TRUE) {
     N.TRIES <- as.integer(N.TRIES)
