@@ -1,6 +1,6 @@
-Changes in version 0.99.1 (2020-04-30)
+Changes in version 0.99.1 (2021-01-01)
 + Submitted to Bioconductor
 
-Changes in version 0.99.5 (2020-04-30)
+Changes in version 0.99.6 (2021-05-04)
 + Adressed comments from Bioconductor review
 + included a mro.obo.gz file which can be read without unzipping
