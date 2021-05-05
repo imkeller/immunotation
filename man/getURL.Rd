@@ -6,7 +6,7 @@
 \usage{
 getURL(
   URL,
-  N.TRIES = 1L,
+  N.TRIES = 2L,
   read_method = c("delim", "lines", "html"),
   skip = 0,
   delim = "\\t",
