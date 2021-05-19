@@ -1,7 +1,7 @@
 Package: immunotation
 Type: Package
 Title: Tools for working with diverse immune genes
-Version: 0.99.9
+Version: 1.0.0
 Date: 2021-04-07
 Authors@R: c(
     person("Katharina", "Imkeller", email = "k.imkeller@dkfz.de", role = c("cre", "aut")))
