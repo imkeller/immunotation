@@ -163,10 +163,10 @@ parse_json_arcasHLA_output <- function(path){
     p1 <- fromJSON(txt=path)
     MHCI <- unlist(map(p1[c('A', 'B', 'C')], .f = ~get_mhcpan_input(.x, 'MHC-I')), use.names = FALSE)
     if((!any(grepl('DQA', names(p1))))||(!any(grepl('DQB', names(p1))))) {
-        stop("DQA or DQB is missing\n")
+        warning("DQA or DQB is missing\n")
     }
     if((!any(grepl('DPB', names(p1))))||(!any(grepl('DPA', names(p1))))) {
-        stop("DPA or DPB is missing\n")
+        warning("DPA or DPB is missing\n")
     }
     MHCII <- c(get_mhcpan_input(unlist(p1[grepl('DQ', names(p1))]),'MHC-II'),
                get_mhcpan_input(unlist(p1[grepl('DR', names(p1))]),'MHC-II'),
