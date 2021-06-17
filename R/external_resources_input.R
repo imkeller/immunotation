@@ -143,3 +143,34 @@ p_group <- get_external_file(file = system.file("extdata", "hla_nom_p.txt",
 p_group$locus <- stringr::str_extract(p_group$locus,
     pattern = "[:alnum:]+(?=\\*?)")
 
+
+#
+# Parse JSON-file arcasHLA output
+#
+
+#' parse_json_arcasHLA_output
+#' 
+#' @param path Indicated the path to file for reading
+#' 
+#' @return returns list with MHCI/MHCII alleles ready for NetMHCpan
+#' @keywords internal
+parse_json_arcasHLA_output <- function(path){
+    library(jsonlite)
+    library(purrr)
+    if(!grepl('.json', path)) {
+        stop("not JSON-format\n")
+    }
+    p1 <- fromJSON(txt=path)
+    MHCI <- unlist(map(p1[c('A', 'B', 'C')], .f = ~get_mhcpan_input(.x, 'MHC-I')), use.names = FALSE)
+    if((!any(grepl('DQA', names(p1))))||(!any(grepl('DQB', names(p1))))) {
+        stop("DQA or DQB is missing\n")
+    }
+    if((!any(grepl('DPB', names(p1))))||(!any(grepl('DPA', names(p1))))) {
+        stop("DPA or DPB is missing\n")
+    }
+    MHCII <- c(get_mhcpan_input(unlist(p1[grepl('DQ', names(p1))]),'MHC-II'),
+               get_mhcpan_input(unlist(p1[grepl('DR', names(p1))]),'MHC-II'),
+               get_mhcpan_input(unlist(p1[grepl('DP', names(p1))]),'MHC-II'))
+    return(list('MHCI'=MHCI,
+                'MHCII'=MHCII))
+}
