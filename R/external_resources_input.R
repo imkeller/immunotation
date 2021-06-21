@@ -154,13 +154,17 @@ p_group$locus <- stringr::str_extract(p_group$locus,
 #' 
 #' @return returns list with MHCI/MHCII alleles ready for NetMHCpan
 #' @keywords internal
-parse_json_arcasHLA_output <- function(path){
+#' @import jsonlite 
+#' @import purrr 
+#' @import stringr
+parse_json_arcasHLA_output <- function(path_to_arcasHLA, path_to_peptide,
+                                       output_bash){
     library(jsonlite)
     library(purrr)
-    if(!grepl('.json', path)) {
+    if(!grepl('.json', path_to_arcasHLA)) {
         stop("not JSON-format\n")
     }
-    p1 <- fromJSON(txt=path)
+    p1 <- jsonlite::fromJSON(txt=path_to_arcasHLA)
     MHCI <- unlist(map(p1[c('A', 'B', 'C')], .f = ~get_mhcpan_input(.x, 'MHC-I')), use.names = FALSE)
     if((!any(grepl('DQA', names(p1))))||(!any(grepl('DQB', names(p1))))) {
         warning("DQA or DQB is missing\n")
@@ -171,6 +175,47 @@ parse_json_arcasHLA_output <- function(path){
     MHCII <- c(get_mhcpan_input(unlist(p1[grepl('DQ', names(p1))]),'MHC-II'),
                get_mhcpan_input(unlist(p1[grepl('DR', names(p1))]),'MHC-II'),
                get_mhcpan_input(unlist(p1[grepl('DP', names(p1))]),'MHC-II'))
+    
+    output_xlsI <- paste(str_sub(tail(unlist(str_split(path_to_arcasHLA, '/')), n=1), 1, - 6), '_netMHCI.xls',sep='')
+    output_xlsII <- paste(str_sub(tail(unlist(str_split(path_to_arcasHLA, '/')), n=1), 1, - 6), '_netMHCII.xls',sep='')
+    
+    generate_bash_output(output_bash, path_to_peptide, 
+                         output_xlsI,output_xlsII)
+    
     return(list('MHCI'=MHCI,
                 'MHCII'=MHCII))
+}
+
+#
+# Jenerate bash-script for netMHC running
+#
+
+#' generate_bash_output
+#' 
+#' @param output_bash Indicate name for output file
+#' @param path_to_peptide Indicate path to analyzed peptide
+#' @param output_xlsI Name for xls output for MHCI
+#' @param output_xlsII Name for xls output for MHCII
+#' 
+#' @keywords internal
+#' @import purrr 
+#' @import stringr
+generate_bash_output<- function(output_bash, path_to_peptide, 
+                                output_xlsI,output_xlsII){
+    if(!file.exists(output_bash))  {
+        file_bash_script<-file(output_bash, 'w')
+        writeLines(paste("netMHCpan -f", path_to_peptide, "-BA -xls -a",
+                         paste(res$MHCI, collapse=","),"-xlsfile", output_xlsI,sep=' '), file_bash_script)
+        writeLines(paste("netMHCIIpan -f", path_to_peptide, "-BA -xls -a",
+                         paste(res$MHCII, collapse=","),"-xlsfile", output_xlsII,sep=' '), file_bash_script)
+        close(file_bash_script)
+    }
+    else {
+        file_bash_script<-file(output_bash, 'a')
+        writeLines(paste("netMHCpan -f", path_to_peptide, "-BA -xls -a",
+                         paste(res$MHCI, collapse=","),"-xlsfile", output_xlsI,sep=' '), file_bash_script)
+        writeLines(paste("netMHCIIpan -f", path_to_peptide, "-BA -xls -a",
+                         paste(res$MHCII, collapse=","),"-xlsfile", output_xlsII,sep=' '), file_bash_script)
+        close(file_bash_script)
+    }
 }

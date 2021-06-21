@@ -28,7 +28,11 @@ Imports: stringr,
     tidyr,
     xml2,
     maps,
-    rlang
+    rlang,
+    purrr,
+    jsonlite,
+    stringr,
+    dplyr
 Suggests: BiocGenerics,
     rmarkdown,
 	BiocStyle,
