@@ -26,9 +26,28 @@ get_mhcpan_input <- function(allele_list, mhc_class) {
         # check that they are allowed in the MHC input
         valid_in_reference <- vapply(mhc_name_list, function(x) x %in%
                 netmhcI_input_template$netmhc_input, FUN.VALUE = logical(1))
-        if (!all(valid_in_reference)) {stop(mhc_name_list[!valid_in_reference], 
-            " not in NetMHCpan input list.\n")}
-        mhc_name_list <- mhc_name_list[valid_in_reference]
+        if (!all(valid_in_reference)) {
+            warning(mhc_name_list[!valid_in_reference], 
+            " not in NetMHCpan input list.\n")
+            converted <- get_P_group(protein_chain_names[!valid_in_reference])
+            converted <- vapply(converted, convert_naming,
+                                add_hla = TRUE, add_star = FALSE,
+                                FUN.VALUE = character(1))
+            valid_in_reference_new <- vapply(converted, function(x) x %in%
+                        netmhcI_input_template$netmhc_input, FUN.VALUE = logical(1))
+            if (!all(valid_in_reference_new)) {
+                warning(converted, 
+                    " not in NetMHCpan input list even after conversion.\n")
+                mhc_name_list <- mhc_name_list[valid_in_reference]
+            }
+            else{
+                mhc_name_list <- c(mhc_name_list[valid_in_reference],
+                                   converted[valid_in_reference_new])
+            }
+        }
+        else{
+            mhc_name_list <- mhc_name_list[valid_in_reference]
+        }
     } else if (mhc_class == "MHC-II") {
         # check which chains belong together
         # convert to NetMHCIIpan format: HLA-DPA10103-DPB10101
@@ -49,11 +68,25 @@ build_mhcII_complexes <- function(protein_chain_names) {
     valid_in_reference <- valid_in_reference | grepl("DRA", protein_chain_names)
     
     if(!all(valid_in_reference)) {
-        stop(protein_chain_names[!valid_in_reference],
-            " not in NetMHCIIpan input list.\n")
+        warning(protein_chain_names[!valid_in_reference], 
+                " not in NetMHCIIpan input list.\n")
+        converted <- get_P_group(protein_chain_names[!valid_in_reference])
+        valid_in_reference_new <- vapply(converted, function(x) x %in%
+                                         all_netmhcII_template, FUN.VALUE = logical(1))
+        if (!all(valid_in_reference_new)) {
+            warning(unlist(converted), 
+                    " not in NetMHCIIpan input list even after conversion.\n")
+            protein_chain_names_valid <- protein_chain_names[valid_in_reference] 
+        }
+        else{
+            protein_chain_names_valid <- unlist(c(protein_chain_names[valid_in_reference],
+                                           converted[valid_in_reference_new]))
+        }
     }
-
-    protein_chain_names_valid <- protein_chain_names[valid_in_reference]       
+    else{
+        protein_chain_names_valid <- protein_chain_names[valid_in_reference]
+    }
+    # protein_chain_names_valid <- protein_chain_names[valid_in_reference]       
     
     # DPA1 DPB1
     dp_complexes <- assemble_dp_dq(protein_chain_names_valid, type = "DP")

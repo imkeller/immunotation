@@ -1,0 +1,86 @@
+---
+title: "Preparing alleles for NetMHCpan/NetMHCIIpan"
+author: 
+- name: Polina Shpudeiko
+date: "`r Sys.Date()`"
+package: immunotation
+output:  
+    BiocStyle::html_document:
+        toc_float: true
+vignette: >
+    %\VignetteIndexEntry{User guide immunotation}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignettePackage{immunotation-vignette}
+    %\VignetteEncoding{UTF-8}
+---
+
+```{r, message=FALSE}
+library(immunotation)
+```
+
+## First example
+
+The `parse_json_arcasHLA_output` function returns list with MHCI and MHCII allele names in proper format for netMHCpan/netMHCIIpan and generates bash-script for running netMHCpan/netMHCIIpan from cmd. It'd report warning if DQA/DQB or DPA/DPB were missing. The user have to specify path to file with arcasHLA output as `path_to_arcasHLA`, path to fasta-file with peptide of interest sequence as `path_to_peptide`, a name of output bash script as `output_bash` and what kind of MHC class to use as `mhc_class_to_analyze` (possible variants is MHC-I, MHC-II or both). The output of this function is list with MHCI and MHCII alleles in proper format.
+
+```{r}
+parse_json_arcasHLA_output(path_to_arcasHLA="../inst/extdata/example1.genotype.json",
+                            path_to_peptide="../inst/extdata/virus_example.fasta",
+                            output_bash="example.genotype.sh",
+                            mhc_class_to_analyze="both")
+```
+
+To analyze multiple files with arcasHLA output, see the code below.
+
+```{r}
+listed.files <- list.files('../inst/extdata')
+listed.files <- listed.files[grepl('json',listed.files)]
+```
+
+If allele is missing in netMHCpan/netMHCIIpan database function will report a warning and try to convert it into proper format. After that if it doesn't work, function will report a warning again and won't add this allele to the analysis.
+
+```{r}
+result_mhc_alleles <- sapply(paste('../inst/extdata/',listed.files,sep=''),    parse_json_arcasHLA_output, 
+       path_to_peptide="../inst/extdata/virus_example.fasta",
+       output_bash="../inst/extdata/example.genotype.sh",
+       mhc_class_to_analyze="both")
+```
+
+An example of list for one file.
+
+```{r}
+result_mhc_alleles$`../inst/extdata/example1.genotype.json`
+```
+
+An example of resulting bash script for netMHCpan/netMHCIIpan analysis.
+
+```{bash}
+head -n 2 ../inst/extdata/example.genotype.sh 
+```
+
+An example for the analysis of netMHCpan output.
+
+```{r}
+example1.genotype_netMHCI <- read.delim("../inst/extdata/example1.genotype_netMHCI.xls")
+new_cols <- str_c(unlist(example1.genotype_netMHCI[1,]), sep='_', names(example1.genotype_netMHCI))
+example1.genotype_netMHCI$NB_X.34 <- as.integer(example1.genotype_netMHCI$NB_X.34)
+```
+
+Formatting column names.
+
+```{r}
+colnames(example1.genotype_netMHCI) <- new_cols
+example1.genotype_netMHCI <- example1.genotype_netMHCI[2:nrow(example1.genotype_netMHCI), ]
+```
+
+Sort only strong binders.
+
+```{r}
+example1.genotype_netMHCI[example1.genotype_netMHCI$NB_X.34 >= 1,]
+```
+
+(One)[https://www.iedb.org/epitope/194449] of strong binders could be found in The Immune Epitope Database (IEDB).
+
+```{r}
+example1.genotype_netMHCI[375,10:15]
+```
+
