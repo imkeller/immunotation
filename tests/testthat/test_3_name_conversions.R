@@ -39,8 +39,8 @@ test_that("get_mhcpan_input() returns error when alleles not in the list", {
     expect_error(get_mhcpan_input("A*01", mhc_class = "MHC-I"))
     expect_error(get_mhcpan_input("DRB1*01", mhc_class = "MHC-II"))
     expect_error(get_mhcpan_input("HLA-DRB1*01", mhc_class = "MHC-II"))
-    expect_error(get_mhcpan_input("A*01:01", mhc_class = "MHC-II"))
-    expect_error(get_mhcpan_input("DRB1*01:01", mhc_class = "MHC-I"))
+    expect_warning(get_mhcpan_input("A*01:01", mhc_class = "MHC-II"))
+    expect_warning(get_mhcpan_input("DRB1*01:01", mhc_class = "MHC-I"))
 })
 
 test_that("get_mhcpan_input() returns expected results", {

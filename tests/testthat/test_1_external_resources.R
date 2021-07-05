@@ -93,4 +93,9 @@ test_that("p_groups has expected entries", {
     expect_true("01:03:01:01/01:03:01:02/01:03:02/01:315" %in% p_group$p_group)
 })
 
+test_that("parse_json_arcasHLA_output has adequate entries", {
+    expect_true("json" %in% path_to_arcasHLA)
+    possible_values <- c("MHC-I", "MHC-II", "both")
+    expect_true(mhc_class_to_analyze %in% possible_values)
+})
 

@@ -1,5 +1,5 @@
 ---
-title: "Preparing alleles for NetMHCpan/NetMHCIIpan"
+title: "NetMHCpan/NetMHCIIpan pipeline"
 author: 
 - name: Polina Shpudeiko
 date: "`r Sys.Date()`"
@@ -8,7 +8,7 @@ output:
     BiocStyle::html_document:
         toc_float: true
 vignette: >
-    %\VignetteIndexEntry{User guide immunotation}
+    %\VignetteIndexEntry{NetMHCpan/NetMHCIIpan pipeline}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignettePackage{immunotation-vignette}
     %\VignetteEncoding{UTF-8}
@@ -18,13 +18,27 @@ vignette: >
 library(immunotation)
 ```
 
-## First example
+# Introduction
+
+## About netMHCpan/netMHCIIpan
+
+Prediction of the binding specificity of MHCI or MHCII complexes allows us investigating what kind of peptides could be found in a sample. This information could be used in the development of personalized treatment for people.
+
+The [NetMHCpan-4.1](https://services.healthtech.dtu.dk/service.php?NetMHCpan-4.1) is a program that could predict peptides which bind to the MHCI complexes by using artificial neural networks (ANNs). Otherwise [NetMHCIIpan-4.0](https://services.healthtech.dtu.dk/service.php?NetMHCIIpan-4.0) predicts binding peptides to the MHCII also by ANNs.
+
+Th aim of this vignette is to demonstrate the whole pipeline for the prediction of MHCI or MHCII binding specificity by using NetMHCpan/NetMHCIIpan tools.
+
+## Preprocessing of MHCI/MHCII alleles
 
 The `parse_json_arcasHLA_output` function returns list with MHCI and MHCII allele names in proper format for netMHCpan/netMHCIIpan and generates bash-script for running netMHCpan/netMHCIIpan from cmd. It'd report warning if DQA/DQB or DPA/DPB were missing. The user have to specify path to file with arcasHLA output as `path_to_arcasHLA`, path to fasta-file with peptide of interest sequence as `path_to_peptide`, a name of output bash script as `output_bash` and what kind of MHC class to use as `mhc_class_to_analyze` (possible variants is MHC-I, MHC-II or both). The output of this function is list with MHCI and MHCII alleles in proper format.
 
 ```{r}
-parse_json_arcasHLA_output(path_to_arcasHLA="../inst/extdata/example1.genotype.json",
-                            path_to_peptide="../inst/extdata/virus_example.fasta",
+parse_json_arcasHLA_output(path_to_arcasHLA=system.file("extdata",
+                                                        "example1.genotype.json",
+                                                        package = "immunotation"),
+                            path_to_peptide=system.file("extdata",
+                                                        "virus_example.fasta",
+                                                        package = "immunotation"),
                             output_bash="example.genotype.sh",
                             mhc_class_to_analyze="both")
 ```
@@ -32,26 +46,28 @@ parse_json_arcasHLA_output(path_to_arcasHLA="../inst/extdata/example1.genotype.j
 To analyze multiple files with arcasHLA output, see the code below.
 
 ```{r}
-listed.files <- list.files('../inst/extdata')
+listed.files <- list.files(system.file("extdata", ".", package = "immunotation"))
 listed.files <- listed.files[grepl('json',listed.files)]
 ```
 
 If allele is missing in netMHCpan/netMHCIIpan database function will report a warning and try to convert it into proper format. After that if it doesn't work, function will report a warning again and won't add this allele to the analysis.
 
 ```{r}
-result_mhc_alleles <- sapply(paste('../inst/extdata/',listed.files,sep=''),    parse_json_arcasHLA_output, 
-       path_to_peptide="../inst/extdata/virus_example.fasta",
-       output_bash="../inst/extdata/example.genotype.sh",
-       mhc_class_to_analyze="both")
+result_mhc_alleles <- sapply(paste(system.file("extdata", ".", package = "immunotation"),listed.files,sep='/'),    
+                             parse_json_arcasHLA_output, 
+                             path_to_peptide = system.file("extdata",   "virus_example.fasta", package = "immunotation"),
+                            output_bash="example.genotype.sh",
+                            mhc_class_to_analyze="both")
 ```
 
 An example of list for one file.
 
 ```{r}
-result_mhc_alleles$`../inst/extdata/example1.genotype.json`
+result_mhc_alleles[[1]]
 ```
+## NetMHCpan/NetMHCIIpan analysis
 
-An example of resulting bash script for netMHCpan/netMHCIIpan analysis.
+An example of resulting bash script for netMHCpan/netMHCIIpan analysis. This code could be initialized in cmd and in order to do it [NetMHCpan-4.1](https://services.healthtech.dtu.dk/service.php?NetMHCpan-4.1) and [NetMHCIIpan-4.0](https://services.healthtech.dtu.dk/service.php?NetMHCIIpan-4.0) should be installed in your path from the provide sources.
 
 ```{bash}
 head -n 2 ../inst/extdata/example.genotype.sh 
@@ -60,27 +76,36 @@ head -n 2 ../inst/extdata/example.genotype.sh
 An example for the analysis of netMHCpan output.
 
 ```{r}
-example1.genotype_netMHCI <- read.delim("../inst/extdata/example1.genotype_netMHCI.xls")
-new_cols <- str_c(unlist(example1.genotype_netMHCI[1,]), sep='_', names(example1.genotype_netMHCI))
-example1.genotype_netMHCI$NB_X.34 <- as.integer(example1.genotype_netMHCI$NB_X.34)
+example1.genotype_netMHCI <- read_netMHCpan_output(system.file("extdata", "example1.genotype_netMHCI.xls", package = "immunotation"), mhc_class_to_analyze='MHC-I')
+DT::datatable(example1.genotype_netMHCI, options = list(scrollX = TRUE))
 ```
 
-Formatting column names.
+Example for MHC-II class.
 
 ```{r}
-colnames(example1.genotype_netMHCI) <- new_cols
-example1.genotype_netMHCI <- example1.genotype_netMHCI[2:nrow(example1.genotype_netMHCI), ]
+example1.genotype_netMHCII <- read_netMHCpan_output(system.file("extdata", "example1.genotype_netMHCII.xls", package = "immunotation"), mhc_class_to_analyze='MHC-II')
+DT::datatable(example1.genotype_netMHCII, options = list(scrollX = TRUE))
 ```
 
 Sort only strong binders.
 
 ```{r}
-example1.genotype_netMHCI[example1.genotype_netMHCI$NB_X.34 >= 1,]
+DT::datatable(example1.genotype_netMHCI[example1.genotype_netMHCI$NB. >= 1,], options = list(scrollX = TRUE))
 ```
 
-(One)[https://www.iedb.org/epitope/194449] of strong binders could be found in The Immune Epitope Database (IEDB).
+[One](https://www.iedb.org/epitope/194449) of strong binders could be found in The Immune Epitope Database (IEDB).
 
 ```{r}
-example1.genotype_netMHCI[375,10:15]
+DT::datatable(example1.genotype_netMHCI[example1.genotype_netMHCI$`core.HLA-A03:01` == 'VEDLFGANL', 10:15], options = list(scrollX = TRUE))
 ```
+# References 
 
+[1] Reynisson B, Alvarez B, Paul S, Peters B and Nielsen M. This version: NetMHCpan-4.1 and NetMHCIIpan-4.0: Improved predictions of MHC antigen presentation by concurrent motif deconvolution and integration of MS MHC eluted ligand data (2020).
+
+[2] Fleri W, Paul S, Dhanda SK, Mahajan S, Xu X, Peters B, Sette A. The Immune Epitope Database and Analysis Resource in Epitope Discovery and Synthetic Vaccine Design (2017).
+
+# Session Information
+
+```{r}
+sessionInfo()
+```

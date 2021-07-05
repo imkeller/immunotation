@@ -31,8 +31,7 @@ Imports: stringr,
     rlang,
     purrr,
     jsonlite,
-    stringr,
-    dplyr
+    stringr
 Suggests: BiocGenerics,
     rmarkdown,
 	BiocStyle,
