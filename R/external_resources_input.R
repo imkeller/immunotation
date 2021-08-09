@@ -84,16 +84,17 @@ lines <- getURL(
     URL = paste0("https://services.healthtech.dtu.dk/services/",
     "NetMHCIIpan-4.0/alleles_name.list"),
     read_method = "lines")
-lines <- stringr::str_replace_all(lines, "\t+|\\s\\s+", "\t")
+lines_rep <- stringr::str_replace_all(lines, "\t+|\\s\\s+", "\t")
 netmhcII_input_template <- suppressWarnings(
-    suppressMessages(readr::read_delim(lines, delim = "\t")))
+    suppressMessages(read.delim(textConnection(lines_rep), sep = "\t")))
+
 
 all_netmhcII_template <- c(netmhcII_input_template$DR, 
-    netmhcII_input_template$`DP alpha`, netmhcII_input_template$`DP beta`,
-    netmhcII_input_template$`DQ alpha`, netmhcII_input_template$`DQ beta`)
+    netmhcII_input_template$DP.alpha, netmhcII_input_template$DP.beta,
+    netmhcII_input_template$DQ.alpha, netmhcII_input_template$DQ.beta)
 # all_netmhcII_template is an internal variable containing list of valid 
 # NetMHCIIpan input alleles
-all_netmhcII_template <- all_netmhcII_template[!is.na(all_netmhcII_template)]
+all_netmhcII_template <- unique(all_netmhcII_template[!is.na(all_netmhcII_template)])
 
 
 #

@@ -11,9 +11,6 @@ test_that("getURL() returns an error when the arguments are not matching", {
                         read_method = "iamnotamethod"))
     expect_error(getURL(URL = "https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/allele.list", 
                         read_method = "delim", delim = TRUE))
-    expect_warning(getURL(URL = "https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/allele.list", 
-                          read_method = "delim", 
-        col_names = c("a","b","c","d")))
 })
 
 
