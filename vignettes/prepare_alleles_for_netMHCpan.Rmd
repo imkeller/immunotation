@@ -33,31 +33,35 @@ Th aim of this vignette is to demonstrate the whole pipeline for the prediction 
 The `parse_json_arcasHLA_output` function returns list with MHCI and MHCII allele names in proper format for netMHCpan/netMHCIIpan and generates bash-script for running netMHCpan/netMHCIIpan from cmd. It'd report warning if DQA/DQB or DPA/DPB were missing. The user have to specify path to file with arcasHLA output as `path_to_arcasHLA`, path to fasta-file with peptide of interest sequence as `path_to_peptide`, a name of output bash script as `output_bash` and what kind of MHC class to use as `mhc_class_to_analyze` (possible variants is MHC-I, MHC-II or both). The output of this function is list with MHCI and MHCII alleles in proper format.
 
 ```{r}
-parse_json_arcasHLA_output(path_to_arcasHLA=system.file("extdata",
-                                                        "example1.genotype.json",
-                                                        package = "immunotation"),
-                            path_to_peptide=system.file("extdata",
-                                                        "virus_example.fasta",
-                                                        package = "immunotation"),
-                            output_bash="example.genotype.sh",
-                            mhc_class_to_analyze="both")
+path_to_arcasHLA <- system.file("extdata",
+                                "example1.genotype.json", 
+                                package="immunotation")
+path_to_peptide <- system.file("extdata",
+                               "virus_example.fasta", 
+                               package="immunotation")
+parse_json_arcasHLA_output(path_to_arcasHLA = path_to_arcasHLA,
+                           path_to_peptide = path_to_peptide,
+                           output_bash = "example.genotype.sh",
+                           mhc_class_to_analyze = "both")
 ```
 
 To analyze multiple files with arcasHLA output, see the code below.
 
 ```{r}
-listed.files <- list.files(system.file("extdata", ".", package = "immunotation"))
+path.to.listed.files <- system.file("extdata", ".", package = "immunotation")
+listed.files <- list.files(path.to.listed.files)
 listed.files <- listed.files[grepl('json',listed.files)]
 ```
 
 If allele is missing in netMHCpan/netMHCIIpan database function will report a warning and try to convert it into proper format. After that if it doesn't work, function will report a warning again and won't add this allele to the analysis.
 
 ```{r}
-result_mhc_alleles <- sapply(paste(system.file("extdata", ".", package = "immunotation"),listed.files,sep='/'),    
-                             parse_json_arcasHLA_output, 
-                             path_to_peptide = system.file("extdata",   "virus_example.fasta", package = "immunotation"),
-                            output_bash="example.genotype.sh",
-                            mhc_class_to_analyze="both")
+files.with.alleles <- paste(path.to.listed.files, listed.files, sep = '/')
+result_mhc_alleles <- sapply(files.with.alleles,    
+                            parse_json_arcasHLA_output, 
+                            path_to_peptide = path_to_peptide,
+                            output_bash = "example.genotype.sh",
+                            mhc_class_to_analyze = "both")
 ```
 
 An example of list for one file.
@@ -76,27 +80,36 @@ head -n 2 ../inst/extdata/example.genotype.sh
 An example for the analysis of netMHCpan output.
 
 ```{r}
-example1.genotype_netMHCI <- read_netMHCpan_output(system.file("extdata", "example1.genotype_netMHCI.xls", package = "immunotation"), mhc_class_to_analyze='MHC-I')
-DT::datatable(example1.genotype_netMHCI, options = list(scrollX = TRUE))
+path.to.netMHCpan.output <- system.file("extdata",
+                                        "example1.genotype_netMHCI.xls",
+                                        package = "immunotation")
+ex.netMHCI <- read_netMHCpan_output(path.to.netMHCpan.output, 
+                                    mhc_class_to_analyze = 'MHC-I')
+DT::datatable(ex.netMHCI, options = list(scrollX = TRUE))
 ```
 
 Example for MHC-II class.
 
 ```{r}
-example1.genotype_netMHCII <- read_netMHCpan_output(system.file("extdata", "example1.genotype_netMHCII.xls", package = "immunotation"), mhc_class_to_analyze='MHC-II')
-DT::datatable(example1.genotype_netMHCII, options = list(scrollX = TRUE))
+path.to.netMHCIIpan.output <- system.file("extdata",
+                                          "example1.genotype_netMHCII.xls",
+                                          package = "immunotation")
+ex.netMHCII <- read_netMHCpan_output(path.to.netMHCIIpan.output,
+                                     mhc_class_to_analyze = 'MHC-II')
+DT::datatable(ex.netMHCII, options = list(scrollX = TRUE))
 ```
 
 Sort only strong binders.
 
 ```{r}
-DT::datatable(example1.genotype_netMHCI[example1.genotype_netMHCI$NB. >= 1,], options = list(scrollX = TRUE))
+DT::datatable(ex.netMHCI[ex.netMHCI$NB. >= 1,], options = list(scrollX = TRUE))
 ```
 
 [One](https://www.iedb.org/epitope/194449) of strong binders could be found in The Immune Epitope Database (IEDB).
 
 ```{r}
-DT::datatable(example1.genotype_netMHCI[example1.genotype_netMHCI$`core.HLA-A03:01` == 'VEDLFGANL', 10:15], options = list(scrollX = TRUE))
+ex.core <- ex.netMHCI[ex.netMHCI$`core.HLA-A03:01` == 'VEDLFGANL', 10:15]
+DT::datatable(ex.core, options = list(scrollX = TRUE))
 ```
 # References 
 
