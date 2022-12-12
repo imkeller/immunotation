@@ -70,7 +70,7 @@ test_that("encode_MAC() returns error when arguments not adequate", {
     
     # this should return an error warning
     expect_equal(encode_MAC("foo"), 
-                 "A service failures was logged.  Contact administrator for more information")
+                 "No Locus for allele: foo")
 })
 
 test_that("encode_MAC() returns expected results", {
