@@ -66,7 +66,7 @@ read_complete_freq_table <- function(url, type) {
     # for some instances where no entries found,the page number is no indicated 
     # return empty table in this case
     if(length(rvest_tables) > 3) {
-        page_nb <- get_nb_pages(rvest_tables[[4]])
+        page_nb <- as.numeric(get_nb_pages(rvest_tables[[4]]))
     } else {return(output_table)}
     
     if (length(page_nb) != 0) {
