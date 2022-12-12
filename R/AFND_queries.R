@@ -4,6 +4,7 @@ convert_string <- function(value) {
     # and replace the NA values in the URL with ""
     if (length(value) > 1) {value <- paste(value, collapse=",")}
     else if(is.na(value)) {""}
+    else if(grepl(" ", value)) {stringr::str_replace(value, " ", "%20")}
     else value
 }
 
