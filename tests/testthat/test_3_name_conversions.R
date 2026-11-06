@@ -80,7 +80,7 @@ test_that("encode_MAC() returns expected results", {
 
 test_that("decode_MAC() returns error when arguments not adequate", {
     expect_error(decode_MAC())
-    expect_equal(decode_MAC(""), "Empty allele designation")
+    expect_equal(decode_MAC(""), "'typing' parameter is missing")
     expect_error(decode_MAC("A*01:01", "A*01:02"))
     
     # this should return an error warning

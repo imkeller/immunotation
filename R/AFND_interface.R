@@ -252,7 +252,7 @@ get_valid_geographics <- function() {
     # country
     selection_str_1 <- rvest_tables[[3]]$X1[[5]]
     split_selection_str_1 <- stringr::str_split(selection_str_1,
-        "(\r\n\t\t\t\t\t)|(\r\n)")[[1]]
+        "(\r\n\t\t\t\t\t)|(\r\n)|(\n)|(\n\t\t\t\t\t)")[[1]]
     
     valid_countries <- stringr::str_split(split_selection_str_1[[4]],
         pattern = stringr::regex("(?<=[a-z]|\\))(?=[A-Z])"))[[1]]
@@ -260,7 +260,7 @@ get_valid_geographics <- function() {
     # region, ethnic
     selection_str_2 <- rvest_tables[[3]]$X1[[6]]
     split_selection_str_2 <- stringr::str_split(selection_str_2,
-        "(\r\n\t\t\t\t\t)|(\r\n)")[[1]]
+        "(\r\n\t\t\t\t\t)|(\r\n)|(\n)|(\n\t\t\t\t\t)")[[1]]
     
     valid_regions <- stringr::str_split(split_selection_str_2[[2]],
         pattern = stringr::regex("(?<=[a-z])(?=[A-Z])"))[[1]]

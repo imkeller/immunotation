@@ -214,7 +214,7 @@ assemble_url_haplotype_freq <- function(hla_selection,
     
     hla_str <- assemble_haplotype_string_url_from_allele_list(hla_selection)
     freq_url_root <- stringr::str_c("http://www.allelefrequencies.net/",
-    "hla6003a.asp?", hla_str, "&hla_population=%s&hla_country=%s&hla_dataset=&",
+    "hla6003x.asp?", hla_str, "&hla_population=%s&hla_country=%s&hla_dataset=&",
     "hla_region=%s&hla_ethnic=%s&hla_study=&hla_order=order_1",
     "&hla_sample_size_pattern=%s&hla_sample_size=%s&",
     "hla_sample_year_pattern=equal&hla_sample_year=&hla_loci=")
