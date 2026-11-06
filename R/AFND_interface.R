@@ -273,7 +273,17 @@ get_valid_geographics <- function() {
         valid_ethnic = valid_ethnic)
 }
 
-valid_geographics <- get_valid_geographics()
+# Built while the package loads. If allelefrequencies.net is unreachable or the
+# page has moved (hla6006a.asp returns 404 since 2026), fall back to empty lists
+# so the package still installs; only the AFND country/region/ethnic checks lose
+# their reference lists.
+valid_geographics <- tryCatch(
+    get_valid_geographics(),
+    error = function(e) {
+        list(valid_countries = character(),
+            valid_regions = character(),
+            valid_ethnic = character())
+    })
 
 #' check_geographics, stops if input not adequate
 #' @param country country used for allele frequency selection
