@@ -244,7 +244,7 @@ check_population <- function(hla_population) {
 #' @return list of valid countries, regions and ethnic origin
 #' @keywords internal
 get_valid_geographics <- function() {
-    url <- "http://www.allelefrequencies.net/hla6006a.asp?"
+    url <- "https://www.allelefrequencies.net/afnd-legacy/hla6006a.asp?"
     html_input <- getURL(url, read_method = "html")
     
     rvest_tables <- rvest::html_table(html_input, fill = TRUE)
@@ -274,9 +274,9 @@ get_valid_geographics <- function() {
 }
 
 # Built while the package loads. If allelefrequencies.net is unreachable or the
-# page has moved (hla6006a.asp returns 404 since 2026), fall back to empty lists
-# so the package still installs; only the AFND country/region/ethnic checks lose
-# their reference lists.
+# page moves again (the original pages moved to /afnd-legacy/ in 2026), fall back
+# to empty lists so the package still installs; only the AFND
+# country/region/ethnic checks lose their reference lists.
 valid_geographics <- tryCatch(
     get_valid_geographics(),
     error = function(e) {
