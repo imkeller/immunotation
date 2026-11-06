@@ -244,7 +244,7 @@ check_population <- function(hla_population) {
 #' @return list of valid countries, regions and ethnic origin
 #' @keywords internal
 get_valid_geographics <- function() {
-    url <- "http://www.allelefrequencies.net/hla6006a.asp?"
+    url <- "https://www.allelefrequencies.net/afnd-legacy/hla6006a.asp?"
     html_input <- getURL(url, read_method = "html")
     
     rvest_tables <- rvest::html_table(html_input, fill = TRUE)
@@ -252,7 +252,7 @@ get_valid_geographics <- function() {
     # country
     selection_str_1 <- rvest_tables[[3]]$X1[[5]]
     split_selection_str_1 <- stringr::str_split(selection_str_1,
-        "(\r\n\t\t\t\t\t)|(\r\n)")[[1]]
+        "(\r\n\t\t\t\t\t)|(\r\n)|(\n)|(\n\t\t\t\t\t)")[[1]]
     
     valid_countries <- stringr::str_split(split_selection_str_1[[4]],
         pattern = stringr::regex("(?<=[a-z]|\\))(?=[A-Z])"))[[1]]
@@ -260,7 +260,7 @@ get_valid_geographics <- function() {
     # region, ethnic
     selection_str_2 <- rvest_tables[[3]]$X1[[6]]
     split_selection_str_2 <- stringr::str_split(selection_str_2,
-        "(\r\n\t\t\t\t\t)|(\r\n)")[[1]]
+        "(\r\n\t\t\t\t\t)|(\r\n)|(\n)|(\n\t\t\t\t\t)")[[1]]
     
     valid_regions <- stringr::str_split(split_selection_str_2[[2]],
         pattern = stringr::regex("(?<=[a-z])(?=[A-Z])"))[[1]]
@@ -273,7 +273,17 @@ get_valid_geographics <- function() {
         valid_ethnic = valid_ethnic)
 }
 
-valid_geographics <- get_valid_geographics()
+# Built while the package loads. If allelefrequencies.net is unreachable or the
+# page moves again (the original pages moved to /afnd-legacy/ in 2026), fall back
+# to empty lists so the package still installs; only the AFND
+# country/region/ethnic checks lose their reference lists.
+valid_geographics <- tryCatch(
+    get_valid_geographics(),
+    error = function(e) {
+        list(valid_countries = character(),
+            valid_regions = character(),
+            valid_ethnic = character())
+    })
 
 #' check_geographics, stops if input not adequate
 #' @param country country used for allele frequency selection

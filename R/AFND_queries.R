@@ -11,7 +11,7 @@ convert_string <- function(value) {
 # get the list of valid alleles
 retrieve_AFND_valid_allele_list <- function(locus) {
     check_hla_locus(locus)
-    query_alleles_url <- sprintf(paste0("http://www.allelefrequencies.net/",
+    query_alleles_url <- sprintf(paste0("https://www.allelefrequencies.net/afnd-legacy/",
     "hla6006c.asp?hla_locus=%s&hla_locus_type=Classical"), locus)
     
     html_input <- getURL(query_alleles_url, read_method = "html")
@@ -94,7 +94,7 @@ assemble_url_allele_freq <- function(hla_locus,
     hla_ethnic, hla_sample_size_pattern, hla_sample_size,
     standard, hla_locus_type = "Classical") {
 
-    freq_url_root <- paste0("http://www.allelefrequencies.net/hla6006a.asp?",
+    freq_url_root <- paste0("https://www.allelefrequencies.net/afnd-legacy/hla6006a.asp?",
     "hla_locus_type=%s&hla_locus=%s&hla_selection=%s&hla_population=%s&",
     "hla_country=%s&hla_dataset=&hla_region=%s&hla_ethnic=%s&hla_study=&",
     "hla_order=order_1&hla_sample_size_pattern=%s&",
@@ -213,8 +213,8 @@ assemble_url_haplotype_freq <- function(hla_selection,
     hla_sample_size_pattern, hla_sample_size) {
     
     hla_str <- assemble_haplotype_string_url_from_allele_list(hla_selection)
-    freq_url_root <- stringr::str_c("http://www.allelefrequencies.net/",
-    "hla6003a.asp?", hla_str, "&hla_population=%s&hla_country=%s&hla_dataset=&",
+    freq_url_root <- stringr::str_c("https://www.allelefrequencies.net/afnd-legacy/",
+    "hla6003x.asp?", hla_str, "&hla_population=%s&hla_country=%s&hla_dataset=&",
     "hla_region=%s&hla_ethnic=%s&hla_study=&hla_order=order_1",
     "&hla_sample_size_pattern=%s&hla_sample_size=%s&",
     "hla_sample_year_pattern=equal&hla_sample_year=&hla_loci=")
@@ -287,7 +287,7 @@ query_haplotype_frequencies <- function(
 
 assemble_url_pop <- function(population_id) {
 
-    pop_url_root <- "http://www.allelefrequencies.net/pop6001c.asp?pop_id=%s"
+    pop_url_root <- "https://www.allelefrequencies.net/afnd-legacy/pop6001c.asp?pop_id=%s"
 
     sprintf(pop_url_root, population_id)
 }
